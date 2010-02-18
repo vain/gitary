@@ -39,24 +39,24 @@ function search()
 		MSGPREFIX="tags"
 	fi
 	SEARCH="$@"
-	
+
 	# "Explode" the list of tags. This'll result in a list of
 	# alternative search terms (boolean OR).
 	SEARCH='('${SEARCH//[[:space:]]/|}')'
 
 	# gawk will do all the magic.
-	gawk '																\
-		BEGIN															\
-		{																\
-			RS="=== ";													\
-			print "Searching '${MSGPREFIX}' for: '${SEARCH}'\n\n";		\
-		};																\
-																		\
-		/'${PREFIX}${SEARCH}'/											\
-		{																\
-			gsub(/'${SEARCH}'/, "'${CH2}'&'${CR}'");					\
-			print "'${CH}'=== " FILENAME " ==='${CR}'\n=== " $0 "\n\n";	\
-		}'																\
+	gawk '                                                              \
+		BEGIN                                                           \
+		{                                                               \
+			RS="=== ";                                                  \
+			print "Searching '${MSGPREFIX}' for: '${SEARCH}'\n\n";      \
+		};                                                              \
+		                                                                \
+		/'${PREFIX}${SEARCH}'/                                          \
+		{                                                               \
+			gsub(/'${SEARCH}'/, "'${CH2}'&'${CR}'");                    \
+			print "'${CH}'=== " FILENAME " ==='${CR}'\n=== " $0 "\n\n"; \
+		}'                                                              \
 		*gitary | less
 }
 
@@ -200,3 +200,5 @@ case "$1" in
 		edit "$(date +%F).gitary"
 		;;
 esac
+
+# vim: set ts=4 sw=4 :
