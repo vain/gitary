@@ -83,7 +83,7 @@ script) will be committed into the git repository.
 Maybe you should also have a look at the example configuration.
 .SH OPTIONS
 All of these options are optional and mutual exclusive. Note that they
-do not start with a hyphen.
+do not need to start with a hyphen.
 .TP
 \fBtags\fP \fIword ...\fP
 Search for tags. Prints out each entry if its tagline includes one of
@@ -143,23 +143,23 @@ checkdatadir
 cd "$DATADIR" || exit 1
 
 case "$1" in
-	tags)
+	tags|-tags|--tags)
 		# Only search for tags.
 		shift
 		search "$@"
 		;;
-	search)
+	search|-search|--search)
 		# Search whole entries.
 		shift
 		search -a "$@"
 		;;
-	gitk)
+	gitk|-gitk|--gitk)
 		gitk --all
 		;;
-	pull)
+	pull|-pull|--pull)
 		git pull
 		;;
-	help|-h|--help)
+	help|-h|-help|--help)
 		# Get the terminals width and add a little margin.
 		COLS=$(stty size | cut -d" " -f2)
 		((COLS = COLS - 2))
@@ -168,12 +168,12 @@ case "$1" in
 		manpage | groff -man -rLL=${COLS}n -Tascii 2>/dev/null | less
 		exit 1
 		;;
-	edit)
+	edit|-edit|--edit)
 		# Edit or create an arbitrary entry.
 		shift
 		edit "$1.gitary"
 		;;
-	viewall)
+	viewall|-viewall|--viewall)
 		# Show all entries in chronological order.
 		for i in *gitary
 		do
