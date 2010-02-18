@@ -23,11 +23,6 @@ fi
 
 function search()
 {
-	# Color shortcuts.
-	CR='\033[00m'
-	CH='\033[01;32m'
-	CH2='\033[01;31m'
-
 	# Only search in tags or the whole entry?
 	if [[ "$1" == "-a" ]]
 	then
@@ -54,10 +49,11 @@ function search()
 		                                                                \
 		/'${PREFIX}${SEARCH}'/                                          \
 		{                                                               \
-			gsub(/'${SEARCH}'/, "'${CH2}'&'${CR}'");                    \
-			print "'${CH}'=== " FILENAME " ==='${CR}'\n=== " $0 "\n\n"; \
+			ENTRYDATE=FILENAME;                                         \
+			gsub(/\.gitary/, "", ENTRYDATE);                            \
+			print "=== " ENTRYDATE ": " $0 "\n\n";                      \
 		}'                                                              \
-		*gitary | less
+		*gitary | "${PAGER[@]}"
 }
 
 function edit()
