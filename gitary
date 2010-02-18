@@ -1,0 +1,163 @@
+#!/bin/bash
+
+#DATADIR=$(dirname $(readlink -e $0))/data
+DATADIR=~/bin/git-diary/data
+
+function search()
+{
+	# Farben
+	CR='\033[00m'
+	CH='\033[01;32m'
+	CH2='\033[01;31m'
+
+	# Nur Tags oder ganze Einträge?
+	if [[ "$1" == "-a" ]]
+	then
+		shift
+		PREFIX=""
+		MSGPREFIX="everything"
+	else
+		PREFIX="\ntags:[^\n]*"
+		MSGPREFIX="tags"
+	fi
+	SEARCH="$@"
+	
+	# Trick: Mache aus den übergebenen Wörtern eine Liste mit Alternativen
+	SEARCH='('${SEARCH//[[:space:]]/|}')'
+
+	# Hau's in "gawk | less" mit fancy Highlighting der Suchwörter
+	gawk '																\
+		BEGIN															\
+		{																\
+			RS="=== ";													\
+			print "Searching '${MSGPREFIX}' for: '${SEARCH}'\n\n";		\
+		};																\
+																		\
+		/'${PREFIX}${SEARCH}'/											\
+		{																\
+			gsub(/'${SEARCH}'/, "'${CH2}'&'${CR}'");					\
+			print "'${CH}'=== " FILENAME " ==='${CR}'\n=== " $0 "\n\n";	\
+		}'																\
+		"$DATADIR/"*gitary | less
+}
+
+function edit()
+{
+	$EDITOR "$1"
+	cd "$DATADIR"
+	git add .
+	git ci -m "Auto-Commit $(date +'%F, %T')"
+}
+
+function manpage()
+{
+	cat << "EOF"
+.TH GITARY 1  "September 2009" "Git-Diary" "A diary using Git"
+.SH NAME
+gitary \- a diary using
+.BR git (1)
+as a backend.
+.SH SYNOPSIS
+\fBgitary\fP [\fIOPTION\fP]...
+.SH DESCRIPTION
+By default, \fBgitary\fP starts your favourite editor (via the
+\fBEDITOR\fP environment variable) to edit the entry for the current
+day. When you leave the editor, anything you've changed in the data
+directory (see the \fBDATADIR\fP variable at the beginning of this
+script) will be committed into the git repository.
+.SH OPTIONS
+All of these options are optional and mutual exclusive. Note that they
+do not start with a hyphen.
+.TP
+\fBtags\fP \fIword ...\fP
+Search for tags. Prints out each entry if its tagline includes one of
+the given words or a part of such a word.
+.TP
+\fBsearch\fP \fIword ...\fP
+Search entire entries. Same as \fBtags\fP but searching is not limited
+to the taglines.
+.TP
+\fBedit\fP \fIday\fP
+Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.
+\fI2009\-09\-31\fP.
+.TP
+\fBgitk\fP
+Launch \fBgitk\fP(1) in the data directory.
+.TP
+\fBviewall\fP
+Show all entries in chronological order in \fBvim -R\fP. It's \fInot\fP
+shown in \fBless\fP(1) because with \fBvim\fP you can get nice syntax
+highlighting.
+.TP
+\fBpull\fP
+Pulls from your git remote by doing a \fBgit pull\fP in the data
+directory. Does not check whether such a remote exists.
+.SH NOTES
+You have to do a \fBgit init\fP the data repository before you can use
+this script.
+.P
+There's a syntax highlighting scheme for
+.BR vim (1)
+ready to be used in the \fB.vim/\fP subdirectory. Thus, you should get
+the best experience when using this script together with \fBvim\fP.
+EOF
+}
+
+case "$1" in
+	tags)
+		# Nur Tags eines Eintrages durchsuchen
+		shift
+		search "$@"
+		;;
+	search)
+		# Jeweils ganze Einträge durchsuchen
+		shift
+		search -a "$@"
+		;;
+	gitk)
+		cd "$DATADIR"
+		gitk --all
+		;;
+	pull)
+		cd "$DATADIR"
+		git pull
+		;;
+	help|-h|--help)
+		# Finde heraus, wie breit das Terminal ist und ziehe dann noch 2
+		# Zeichen ab, um einen "Rand" zu haben.
+		COLS=$(stty size | cut -d" " -f2)
+		((COLS = COLS - 2))
+
+		# Erstelle on the fly aus dem Snippet oben eine kleine
+		# "Manpage".
+		manpage | groff -man -rLL=${COLS}n -Tascii 2>/dev/null | less
+		exit 1
+		;;
+	edit)
+		# Beliebigen Eintrag bearbeiten / anlegen
+		shift
+		edit "$DATADIR/$1.gitary"
+		;;
+	viewall)
+		# Alle Einträge nacheinander anzeigen
+		for i in "$DATADIR"/*gitary
+		do
+			BNAME=$(basename "$i")
+			BNAME=${BNAME%%.*}
+			echo
+			echo
+			echo
+			echo
+			echo "#############################################"
+			echo "               DAY: $BNAME"
+			echo "#############################################"
+			echo
+			echo
+			cat "$i"
+		done | vim -R - -c 'set ft=gitary'
+		;;
+	*)
+		# Neuer Eintrag heute
+		edit "$DATADIR/$(date +%F).gitary"
+		;;
+esac
