@@ -70,7 +70,7 @@ function edit()
 function manpage()
 {
 	cat << "EOF"
-.TH GITARY 1  "September 2009" "Git-Diary" "A diary using Git"
+.TH GITARY 1  "February 2010" "Git-Diary" "A diary using Git"
 .SH NAME
 gitary \- a diary using
 .BR git (1)
