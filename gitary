@@ -83,6 +83,8 @@ By default, \fBgitary\fP starts your favourite editor (via the
 day. When you leave the editor, anything you've changed in the data
 directory (see the \fBDATADIR\fP variable at the beginning of this
 script) will be committed into the git repository.
+.P
+Maybe you should also have a look at the example configuration.
 .SH OPTIONS
 All of these options are optional and mutual exclusive. Note that they
 do not start with a hyphen.
@@ -111,7 +113,8 @@ Pulls from your git remote by doing a \fBgit pull\fP in the data
 directory. Does not check whether such a remote exists.
 .SH NOTES
 You have to do a \fBgit init\fP the data repository before you can use
-this script.
+this script. However, if you don't do this, the script will ask you what
+to do.
 .P
 There's a syntax highlighting scheme for
 .BR vim (1)
