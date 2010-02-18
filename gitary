@@ -14,6 +14,8 @@ then
 	source .gitaryrc
 fi
 
+cd "$DATADIR" || exit 1
+
 function search()
 {
 	# Farben
@@ -49,13 +51,12 @@ function search()
 			gsub(/'${SEARCH}'/, "'${CH2}'&'${CR}'");					\
 			print "'${CH}'=== " FILENAME " ==='${CR}'\n=== " $0 "\n\n";	\
 		}'																\
-		"$DATADIR/"*gitary | less
+		*gitary | less
 }
 
 function edit()
 {
 	$EDITOR "$1"
-	cd "$DATADIR"
 	git add .
 	git ci -m "Auto-Commit $(date +'%F, %T')"
 }
@@ -126,11 +127,9 @@ case "$1" in
 		search -a "$@"
 		;;
 	gitk)
-		cd "$DATADIR"
 		gitk --all
 		;;
 	pull)
-		cd "$DATADIR"
 		git pull
 		;;
 	help|-h|--help)
@@ -147,11 +146,11 @@ case "$1" in
 	edit)
 		# Beliebigen Eintrag bearbeiten / anlegen
 		shift
-		edit "$DATADIR/$1.gitary"
+		edit "$1.gitary"
 		;;
 	viewall)
 		# Alle Einträge nacheinander anzeigen
-		for i in "$DATADIR"/*gitary
+		for i in *gitary
 		do
 			BNAME=$(basename "$i")
 			BNAME=${BNAME%%.*}
@@ -169,6 +168,6 @@ case "$1" in
 		;;
 	*)
 		# Neuer Eintrag heute
-		edit "$DATADIR/$(date +%F).gitary"
+		edit "$(date +%F).gitary"
 		;;
 esac
