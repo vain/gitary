@@ -1,7 +1,18 @@
 #!/bin/bash
 
-#DATADIR=$(dirname $(readlink -e $0))/data
-DATADIR=~/bin/git-diary/data
+# Echtes Basedir bestimmen, dabei auch Links auflösen. Da spielt sich
+# dann alles ab erstmal.
+BASEDIR="$(dirname $(readlink -e $0))"
+cd "$BASEDIR"
+
+# Standardsettings setzen.
+DATADIR="$BASEDIR"/data
+
+# Nutzersettings lesen. Überschreiben ggf. die Defaults.
+if [[ -f .gitaryrc ]]
+then
+	source .gitaryrc
+fi
 
 function search()
 {
