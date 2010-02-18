@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# Include further functions.
+source gitary-functions || exit 1
+
 # Get the real basedir by resolving any links.
 BASEDIR="$(dirname $(readlink -e $0))"
-cd "$BASEDIR"
+cd "$BASEDIR" || exit 1
 
 # Default settings.
 DATADIR="$BASEDIR"/data
@@ -20,123 +23,6 @@ if [[ -f .gitaryrc ]]
 then
 	source .gitaryrc
 fi
-
-function search()
-{
-	# Only search in tags or the whole entry?
-	if [[ "$1" == "-a" ]]
-	then
-		shift
-		PREFIX=""
-		MSGPREFIX="everything"
-	else
-		PREFIX="\ntags:[^\n]*"
-		MSGPREFIX="tags"
-	fi
-	SEARCH="$@"
-
-	# "Explode" the list of tags. This'll result in a list of
-	# alternative search terms (boolean OR).
-	SEARCH='('${SEARCH//[[:space:]]/|}')'
-
-	# gawk will do all the magic.
-	gawk '                                                              \
-		BEGIN                                                           \
-		{                                                               \
-			RS="=== ";                                                  \
-			print "Searching '${MSGPREFIX}' for: '${SEARCH}'\n\n";      \
-		};                                                              \
-		                                                                \
-		/'${PREFIX}${SEARCH}'/                                          \
-		{                                                               \
-			ENTRYDATE=FILENAME;                                         \
-			gsub(/\.gitary/, "", ENTRYDATE);                            \
-			print "=== " ENTRYDATE ": " $0 "\n\n";                      \
-		}'                                                              \
-		*gitary | "${PAGER[@]}"
-}
-
-function edit()
-{
-	"${EDITOR[@]}" "$1"
-	git add .
-	git ci -m "Auto-Commit $(date +'%F, %T')"
-}
-
-function manpage()
-{
-	cat << "EOF"
-.TH GITARY 1  "February 2010" "Git-Diary" "A diary using Git"
-.SH NAME
-gitary \- a diary using
-.BR git (1)
-as a backend.
-.SH SYNOPSIS
-\fBgitary\fP [\fIOPTION\fP]...
-.SH DESCRIPTION
-By default, \fBgitary\fP starts your favourite editor (via the
-\fBEDITOR\fP environment variable) to edit the entry for the current
-day. When you leave the editor, anything you've changed in the data
-directory (see the \fBDATADIR\fP variable at the beginning of this
-script) will be committed into the git repository.
-.P
-Maybe you should also have a look at the example configuration.
-.SH OPTIONS
-All of these options are optional and mutual exclusive. Note that they
-do not need to start with a hyphen.
-.TP
-\fBtags\fP \fIword ...\fP
-Search for tags. Prints out each entry if its tagline includes one of
-the given words or a part of such a word.
-.TP
-\fBsearch\fP \fIword ...\fP
-Search entire entries. Same as \fBtags\fP but searching is not limited
-to the taglines.
-.TP
-\fBedit\fP \fIday\fP
-Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.
-\fI2009\-09\-31\fP.
-.TP
-\fBgitk\fP
-Launch \fBgitk\fP(1) in the data directory.
-.TP
-\fBviewall\fP
-Show all entries in chronological order in the program specified in
-your \fBPAGER\fP environment variable.
-.TP
-\fBpull\fP
-Pulls from your git remote by doing a \fBgit pull\fP in the data
-directory. Does not check whether such a remote exists.
-.SH NOTES
-You have to do a \fBgit init\fP the data repository before you can use
-this script. However, if you don't do this, the script will ask you what
-to do.
-.P
-There's a syntax highlighting scheme for
-.BR vim (1)
-ready to be used in the \fB.vim/\fP subdirectory. Thus, you should get
-the best experience when using this script together with \fBvim\fP.
-EOF
-}
-
-function checkdatadir()
-{
-	if [[ ! -d "$DATADIR" ]]
-	then
-		echo "The data directory ($DATADIR) does not exist yet."
-		read -p "Would you like to create it now? [y/N] " ANSWER
-
-		if [[ "$ANSWER" == "Y" ]] || [[ "$ANSWER" == "y" ]]
-		then
-			mkdir -p "$DATADIR" || exit 1
-			cd "$DATADIR" || exit 1
-			git init || exit 1
-			cd - || exit 1
-		else
-			exit 1
-		fi
-	fi
-}
 
 checkdatadir
 
