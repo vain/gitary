@@ -28,7 +28,12 @@ function search()
 		{                                                               \
 			ENTRYDATE=FILENAME;                                         \
 			gsub(/\.gitary/, "", ENTRYDATE);                            \
-			print "=== " ENTRYDATE ": " $0 "\n\n";                      \
+			gsub(/\n+$/, "", $0);                                       \
+			print "#############################################";      \
+			print "               DAY: " ENTRYDATE;                     \
+			print "#############################################";      \
+			print "\n";                                                 \
+			print "=== " $0 "\n\n\n\n";                                 \
 		}'                                                              \
 		*gitary | "${PAGER[@]}"
 }
@@ -38,6 +43,29 @@ function edit()
 	"${EDITOR[@]}" "$1"
 	git add .
 	git ci -m "Auto-Commit $(date +'%F, %T')"
+}
+
+function viewall()
+{
+	(
+	echo
+	echo
+	for i in *gitary
+	do
+		BNAME=$(basename "$i")
+		BNAME=${BNAME%%.*}
+		echo "#############################################"
+		echo "               DAY: $BNAME"
+		echo "#############################################"
+		echo
+		echo
+		cat "$i"
+		echo
+		echo
+		echo
+		echo
+	done
+	) | "${PAGER[@]}"
 }
 
 function manpage()

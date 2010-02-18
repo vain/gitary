@@ -61,21 +61,7 @@ case "$1" in
 		;;
 	viewall|-viewall|--viewall)
 		# Show all entries in chronological order.
-		for i in *gitary
-		do
-			BNAME=$(basename "$i")
-			BNAME=${BNAME%%.*}
-			echo
-			echo
-			echo
-			echo
-			echo "#############################################"
-			echo "               DAY: $BNAME"
-			echo "#############################################"
-			echo
-			echo
-			cat "$i"
-		done | "${PAGER[@]}"
+		viewall
 		;;
 	*)
 		# Create a new entry for today.
