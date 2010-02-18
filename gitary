@@ -1,22 +1,21 @@
 #!/bin/bash
 
-# Echtes Basedir bestimmen, dabei auch Links auflösen. Da spielt sich
-# dann alles ab erstmal.
+# Get the real basedir by resolving any links.
 BASEDIR="$(dirname $(readlink -e $0))"
 cd "$BASEDIR"
 
-# Standardsettings setzen.
+# Default settings.
 DATADIR="$BASEDIR"/data
 
 EDITOR="${EDITOR:-vim}"
 PAGER="${PAGER:-less}"
 
-# EDITOR und PAGER müssen Arrays sein. Nur so lässt sich ein Parameter
-# mit einem Leerzeichen abbilden.
+# EDITOR and PAGER must be arrays. That's the only way to allow spaces
+# in arguments (see config).
 EDITOR=("$EDITOR")
 PAGER=("$PAGER")
 
-# Nutzersettings lesen. Überschreiben ggf. die Defaults.
+# Read user settings, maybe overwrite defaults.
 if [[ -f .gitaryrc ]]
 then
 	source .gitaryrc
@@ -24,12 +23,12 @@ fi
 
 function search()
 {
-	# Farben
+	# Color shortcuts.
 	CR='\033[00m'
 	CH='\033[01;32m'
 	CH2='\033[01;31m'
 
-	# Nur Tags oder ganze Einträge?
+	# Only search in tags or the whole entry?
 	if [[ "$1" == "-a" ]]
 	then
 		shift
@@ -41,10 +40,11 @@ function search()
 	fi
 	SEARCH="$@"
 	
-	# Trick: Mache aus den übergebenen Wörtern eine Liste mit Alternativen
+	# "Explode" the list of tags. This'll result in a list of
+	# alternative search terms (boolean OR).
 	SEARCH='('${SEARCH//[[:space:]]/|}')'
 
-	# Hau's in "gawk | less" mit fancy Highlighting der Suchwörter
+	# gawk will do all the magic.
 	gawk '																\
 		BEGIN															\
 		{																\
@@ -148,12 +148,12 @@ cd "$DATADIR" || exit 1
 
 case "$1" in
 	tags)
-		# Nur Tags eines Eintrages durchsuchen
+		# Only search for tags.
 		shift
 		search "$@"
 		;;
 	search)
-		# Jeweils ganze Einträge durchsuchen
+		# Search whole entries.
 		shift
 		search -a "$@"
 		;;
@@ -164,23 +164,21 @@ case "$1" in
 		git pull
 		;;
 	help|-h|--help)
-		# Finde heraus, wie breit das Terminal ist und ziehe dann noch 2
-		# Zeichen ab, um einen "Rand" zu haben.
+		# Get the terminals width and add a little margin.
 		COLS=$(stty size | cut -d" " -f2)
 		((COLS = COLS - 2))
 
-		# Erstelle on the fly aus dem Snippet oben eine kleine
-		# "Manpage".
+		# Create an "on-the-fly" manpage.
 		manpage | groff -man -rLL=${COLS}n -Tascii 2>/dev/null | less
 		exit 1
 		;;
 	edit)
-		# Beliebigen Eintrag bearbeiten / anlegen
+		# Edit or create an arbitrary entry.
 		shift
 		edit "$1.gitary"
 		;;
 	viewall)
-		# Alle Einträge nacheinander anzeigen
+		# Show all entries in chronological order.
 		for i in *gitary
 		do
 			BNAME=$(basename "$i")
@@ -198,7 +196,7 @@ case "$1" in
 		done | "${PAGER[@]}"
 		;;
 	*)
-		# Neuer Eintrag heute
+		# Create a new entry for today.
 		edit "$(date +%F).gitary"
 		;;
 esac
