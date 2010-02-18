@@ -8,6 +8,14 @@ cd "$BASEDIR"
 # Standardsettings setzen.
 DATADIR="$BASEDIR"/data
 
+EDITOR="${EDITOR:-vim}"
+PAGER="${PAGER:-less}"
+
+# EDITOR und PAGER müssen Arrays sein. Nur so lässt sich ein Parameter
+# mit einem Leerzeichen abbilden.
+EDITOR=("$EDITOR")
+PAGER=("$PAGER")
+
 # Nutzersettings lesen. Überschreiben ggf. die Defaults.
 if [[ -f .gitaryrc ]]
 then
@@ -54,7 +62,7 @@ function search()
 
 function edit()
 {
-	$EDITOR "$1"
+	"${EDITOR[@]}" "$1"
 	git add .
 	git ci -m "Auto-Commit $(date +'%F, %T')"
 }
@@ -95,9 +103,8 @@ Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.
 Launch \fBgitk\fP(1) in the data directory.
 .TP
 \fBviewall\fP
-Show all entries in chronological order in \fBvim -R\fP. It's \fInot\fP
-shown in \fBless\fP(1) because with \fBvim\fP you can get nice syntax
-highlighting.
+Show all entries in chronological order in the program specified in
+your \fBPAGER\fP environment variable.
 .TP
 \fBpull\fP
 Pulls from your git remote by doing a \fBgit pull\fP in the data
@@ -185,7 +192,7 @@ case "$1" in
 			echo
 			echo
 			cat "$i"
-		done | vim -R - -c 'set ft=gitary'
+		done | "${PAGER[@]}"
 		;;
 	*)
 		# Neuer Eintrag heute
