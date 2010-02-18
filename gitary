@@ -14,8 +14,6 @@ then
 	source .gitaryrc
 fi
 
-cd "$DATADIR" || exit 1
-
 function search()
 {
 	# Farben
@@ -114,6 +112,29 @@ ready to be used in the \fB.vim/\fP subdirectory. Thus, you should get
 the best experience when using this script together with \fBvim\fP.
 EOF
 }
+
+function checkdatadir()
+{
+	if [[ ! -d "$DATADIR" ]]
+	then
+		echo "The data directory ($DATADIR) does not exist yet."
+		read -p "Would you like to create it now? [y/N] " ANSWER
+
+		if [[ "$ANSWER" == "Y" ]] || [[ "$ANSWER" == "y" ]]
+		then
+			mkdir -p "$DATADIR" || exit 1
+			cd "$DATADIR" || exit 1
+			git init || exit 1
+			cd - || exit 1
+		else
+			exit 1
+		fi
+	fi
+}
+
+checkdatadir
+
+cd "$DATADIR" || exit 1
 
 case "$1" in
 	tags)
