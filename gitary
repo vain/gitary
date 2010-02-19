@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Include further functions.
-source gitary-functions || exit 1
-
 # Get the real basedir by resolving any links.
 BASEDIR="$(dirname $(readlink -e $0))"
 cd "$BASEDIR" || exit 1
+
+# Include further functions.
+source gitary-functions || exit 1
 
 # Default settings.
 DATADIR="$BASEDIR"/data
