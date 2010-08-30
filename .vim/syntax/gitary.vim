@@ -14,6 +14,11 @@ elseif exists("b:current_syntax")
 	finish
 endif
 
+" Avoid wrong syntax highlighting (may happen when using very long code
+" snippets).
+syn sync clear
+syn sync fromstart
+
 " define the syntax
 syn region  giaheader    start="=== " end=" ==="
 syn region  giacode      start="^[[:space:]]*---8<---$" end="^[[:space:]]*---8<---$"
