@@ -52,6 +52,10 @@ syn include @codelua syntax/lua.vim
 unlet b:current_syntax
 syn region giacodelua matchgroup=giacodetags start="^[[:space:]]*---8<---lua$" end="^[[:space:]]*---8<---$" contains=@codelua
 
+syn include @codediff syntax/diff.vim
+unlet b:current_syntax
+syn region giacodediff matchgroup=giacodetags start="^[[:space:]]*---8<---diff$" end="^[[:space:]]*---8<---$" contains=@codediff
+
 " The following stuff is from "mail.vim":
 syn match   mailURL      `\v<(((https?|ftp|gopher)://|(mailto|file|news):)[^' 	<>"]+|(www|web|w3)[a-z0-9_-]*\.[a-z0-9._-]+\.[^' 	<>"]+)[a-z0-9/]`
 syn match   mailEmail    "\v[_=a-z\./+0-9-]+\@[a-z0-9._-]+\a{2}"

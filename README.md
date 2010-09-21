@@ -64,8 +64,9 @@ When writing code, you can add the name of language after the opening
 	---8<---
 
 
-Currently, there's support for Bash, Python, Ruby, Java, C, Lua and Vim
-script. Feel free to extend this list or provide a generic solution.
+Currently, there's support for Bash, Python, Ruby, Java, C, Lua, Vim
+script and patches/diff. Feel free to extend this list or provide a
+generic solution.
 
 
 Blobs
