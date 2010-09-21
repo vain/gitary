@@ -14,18 +14,43 @@ elseif exists("b:current_syntax")
 	finish
 endif
 
-" Avoid wrong syntax highlighting (may happen when using very long code
-" snippets).
-syn sync clear
-syn sync fromstart
-
 " define the syntax
 syn region  giaheader    start="=== " end=" ==="
-syn region  giacode      start="^[[:space:]]*---8<---$" end="^[[:space:]]*---8<---$"
+syn region  giacode      matchgroup=giacodetags start="^[[:space:]]*---8<---$" end="^[[:space:]]*---8<---$"
 syn match   giaref       "^-- "
 syn match   giaref2      `^\[[[:digit:]]\+\] `
 syn match   giatags      "^tags:"
 syn match   giasep       "^#####.*$"
+
+" Include other syntax files for foreign code
+let b:is_bash = 1
+syn include @codesh syntax/sh.vim
+unlet b:current_syntax
+syn region giacodesh matchgroup=giacodetags start="^[[:space:]]*---8<---bash$" end="^[[:space:]]*---8<---$" contains=@codesh
+
+syn include @codepython syntax/python.vim
+unlet b:current_syntax
+syn region giacodepython matchgroup=giacodetags start="^[[:space:]]*---8<---python$" end="^[[:space:]]*---8<---$" contains=@codepython
+
+syn include @coderuby syntax/ruby.vim
+unlet b:current_syntax
+syn region giacoderuby matchgroup=giacodetags start="^[[:space:]]*---8<---ruby$" end="^[[:space:]]*---8<---$" contains=@coderuby
+
+syn include @codejava syntax/java.vim
+unlet b:current_syntax
+syn region giacodejava matchgroup=giacodetags start="^[[:space:]]*---8<---java$" end="^[[:space:]]*---8<---$" contains=@codejava
+
+syn include @codec syntax/c.vim
+unlet b:current_syntax
+syn region giacodec matchgroup=giacodetags start="^[[:space:]]*---8<---c$" end="^[[:space:]]*---8<---$" contains=@codec
+
+syn include @codevim syntax/vim.vim
+unlet b:current_syntax
+syn region giacodevim matchgroup=giacodetags start="^[[:space:]]*---8<---vim$" end="^[[:space:]]*---8<---$" contains=@codevim
+
+syn include @codelua syntax/lua.vim
+unlet b:current_syntax
+syn region giacodelua matchgroup=giacodetags start="^[[:space:]]*---8<---lua$" end="^[[:space:]]*---8<---$" contains=@codelua
 
 " The following stuff is from "mail.vim":
 syn match   mailURL      `\v<(((https?|ftp|gopher)://|(mailto|file|news):)[^' 	<>"]+|(www|web|w3)[a-z0-9_-]*\.[a-z0-9._-]+\.[^' 	<>"]+)[a-z0-9/]`
@@ -64,6 +89,7 @@ if version >= 508 || !exists("did_gia_syntax_inits")
 	HiLink giaref           Type
 	HiLink giaref2          Type
 	HiLink giacode          Comment
+	HiLink giacodetags      Comment
 	HiLink giasep           Type
 
 	HiLink mailEmail        PreProc
@@ -84,5 +110,10 @@ if version >= 508 || !exists("did_gia_syntax_inits")
 
 	delcommand HiLink
 endif
+
+" Avoid wrong syntax highlighting (may happen when using very long code
+" snippets).
+syn sync clear
+syn sync fromstart
 
 let b:current_syntax = "gitary"

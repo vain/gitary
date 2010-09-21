@@ -47,6 +47,26 @@ use, so the script will know where single entries begin and end. This
 Vim syntax files are also available. Those are able to brighten up your
 gitary life.
 
+When writing code, you can add the name of language after the opening
+`---8<---` tag, for example:
+
+	This will be highlighted as a regular bash script:
+	---8<---bash
+	for i in *
+	do
+		echo "<$i>"
+	done
+	---8<---
+
+	That's a python script:
+	---8<---python
+	print "Hello world."
+	---8<---
+
+
+Currently, there's support for Bash, Python, Ruby, Java, C, Lua and Vim
+script. Feel free to extend this list or provide a generic solution.
+
 
 Blobs
 -----
