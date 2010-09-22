@@ -2,10 +2,9 @@
 
 # Get the real basedir by resolving any links.
 BASEDIR=$(dirname "$(readlink -e "$0")")
-cd -- "$BASEDIR" || exit 1
 
 # Include further functions.
-source gitary-functions || exit 1
+source "$BASEDIR/gitary-functions" || exit 1
 
 # Default settings.
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}/gitary"
