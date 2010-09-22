@@ -21,8 +21,17 @@ PAGER=("$PAGER")
 CONFIGFILE="${XDG_CONFIG_HOME:-$HOME/.config}/gitaryrc"
 [[ -f "$CONFIGFILE" ]] && source "$CONFIGFILE"
 
-checkdatadir
+# Check if the user only wants to view the help page. If so, display it
+# and exit. This does not check whether the data dir exists.
+case "$1" in
+	help|-h|-help|--help)
+		man -M "$BASEDIR" gitary
+		exit 1
+		;;
+esac
 
+# Okay, now check the data dir and process all other options.
+checkdatadir
 cd "$DATADIR" || exit 1
 
 case "$1" in
@@ -46,10 +55,6 @@ case "$1" in
 		;;
 	pull|-pull|--pull)
 		git pull
-		;;
-	help|-h|-help|--help)
-		man -M "$BASEDIR" gitary
-		exit 1
 		;;
 	edit|-edit|--edit)
 		# Edit or create an arbitrary entry.
