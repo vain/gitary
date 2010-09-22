@@ -21,10 +21,10 @@ function search()
 		BEGIN                                                           \
 		{                                                               \
 			RS="=== ";                                                  \
-			print "Searching '${MSGPREFIX}' for: '${SEARCH}'\n\n";      \
+			print "Searching '"${MSGPREFIX}"' for: '"${SEARCH}"'\n\n";  \
 		};                                                              \
 		                                                                \
-		/'${PREFIX}${SEARCH}'/                                          \
+		/'"${PREFIX}${SEARCH}"'/                                        \
 		{                                                               \
 			ENTRYDATE=FILENAME;                                         \
 			gsub(/\.gitary/, "", ENTRYDATE);                            \
