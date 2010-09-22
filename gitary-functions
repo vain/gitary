@@ -1,15 +1,22 @@
 function search()
 {
-	# Only search in tags or the whole entry?
-	if [[ "$1" == "-a" ]]
-	then
-		shift
-		PREFIX=""
-		MSGPREFIX="everything"
-	else
-		PREFIX="\ntags:[^\n]*"
-		MSGPREFIX="tags"
-	fi
+	# Only search in tags or the whole entry? Only refs?
+	case "$1" in
+		-a)
+			shift
+			PREFIX=""
+			MSGPREFIX="everything"
+			;;
+		-r)
+			shift
+			PREFIX="\n(-- |\[[[:digit:]]+\])[^\n]*"
+			MSGPREFIX="references"
+			;;
+		*)
+			PREFIX="\ntags:[^\n]*"
+			MSGPREFIX="tags"
+	esac
+
 	SEARCH="$@"
 
 	# "Explode" the list of tags. This'll result in a list of
@@ -94,9 +101,15 @@ do not need to start with a hyphen.
 Search for tags. Prints out each entry if its tagline includes one of
 the given words or a part of such a word.
 .TP
+\fBrefs\fP \fIword ...\fP
+Search in references. Prints out each entry if it contains a reference
+like \fI\(lq\-\- Einstein\(rq\fP or \fI\(lq[1] www.archlinux.org\(rq\fP.
+That is, references start with two dashes and one blank at the beginning
+of a line \(em but you can also use a number in square brackets instead.
+.TP
 \fBsearch\fP \fIword ...\fP
 Search entire entries. Same as \fBtags\fP but searching is not limited
-to the taglines.
+to taglines or references.
 .TP
 \fBedit\fP \fIday\fP
 Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.

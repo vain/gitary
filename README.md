@@ -94,5 +94,4 @@ Dependencies
 TODO
 ----
 
-* Special support for searching for URLs.
 * Clean up Vim files.

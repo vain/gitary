@@ -34,6 +34,11 @@ case "$1" in
 		shift
 		search "$@"
 		;;
+	refs|-refs|--refs)
+		# Only search for references.
+		shift
+		search -r "$@"
+		;;
 	search|-search|--search)
 		# Search whole entries.
 		shift
