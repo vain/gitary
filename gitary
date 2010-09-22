@@ -51,12 +51,7 @@ case "$1" in
 		git pull
 		;;
 	help|-h|-help|--help)
-		# Get the terminals width and add a little margin.
-		COLS=$(stty size | cut -d" " -f2)
-		((COLS = COLS - 2))
-
-		# Create an "on-the-fly" manpage.
-		manpage | groff -man -rLL=${COLS}n -Tascii 2>/dev/null | less
+		man -M "$BASEDIR" gitary
 		exit 1
 		;;
 	edit|-edit|--edit)
