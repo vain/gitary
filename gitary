@@ -8,8 +8,7 @@ cd -- "$BASEDIR" || exit 1
 source gitary-functions || exit 1
 
 # Default settings.
-DATADIR="$BASEDIR"/data
-
+DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}/gitary"
 EDITOR="${EDITOR:-vim}"
 PAGER="${PAGER:-less}"
 
