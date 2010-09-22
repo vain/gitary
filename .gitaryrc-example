@@ -1,7 +1,0 @@
-# Where's your data?
-# DATADIR=/path/to/data
-
-# Please note that the following variables have to be arrays.
-# Which programs do you wish to use as editor and pager?
-# EDITOR=("vim")
-# PAGER=("vim" "-R" "-" "-c" "set ft=gitary")

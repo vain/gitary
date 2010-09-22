@@ -1,4 +1,4 @@
-.TH GITARY 1  "February 2010" "Git-Diary" "A diary using Git"
+.TH GITARY 1  "September 2010" "Git-Diary" "A diary using Git"
 .SH NAME
 gitary \- a diary using
 .BR git (1)
@@ -6,51 +6,145 @@ as a backend.
 .SH SYNOPSIS
 \fBgitary\fP [\fIOPTION\fP]...
 .SH DESCRIPTION
-By default, \fBgitary\fP starts your favourite editor (via the
-\fBEDITOR\fP environment variable) to edit the entry for the current
-day. When you leave the editor, anything you've changed in the data
-directory (see the \fBDATADIR\fP variable at the beginning of this
-script) will be committed into the git repository.
-.P
-Maybe you should also have a look at the example configuration.
+Without any options, \fBgitary\fP starts your favourite editor to edit
+the entry for the current day. When you leave the editor, anything
+you've changed in the data directory will be automatically committed
+into the git repository. That means that \(em while writing your entry
+\(em you can place arbitrary files in the data directory. This allows
+you to store pictures or programs as well.
 .SH OPTIONS
 All of these options are optional and mutual exclusive. Note that they
-do not need to start with a hyphen.
+can start with one, two or no dashes.
 .TP
-\fBtags\fP \fIword ...\fP
+\fB\-\-tags\fP \fIword ...\fP
 Search for tags. Prints out each entry if its tagline includes one of
 the given words or a part of such a word.
 .TP
-\fBrefs\fP \fIword ...\fP
+\fB\-\-refs\fP \fIword ...\fP
 Search in references. Prints out each entry if it contains a reference
 like \fI\(lq\-\- Einstein\(rq\fP or \fI\(lq[1] www.archlinux.org\(rq\fP.
 That is, references start with two dashes and one blank at the beginning
 of a line \(em but you can also use a number in square brackets instead.
 .TP
-\fBsearch\fP \fIword ...\fP
-Search entire entries. Same as \fBtags\fP but searching is not limited
-to taglines or references.
+\fB\-\-search\fP \fIword ...\fP
+Search entire entries. Same as \fB\-\-tags\fP but searching is not
+limited to taglines or references.
 .TP
-\fBedit\fP \fIday\fP
+\fB\-\-edit\fP \fIday\fP
 Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.
 \fI2009\-09\-31\fP.
 .TP
-\fBgitk\fP
+\fB\-\-gitk\fP
 Launch \fBgitk\fP(1) in the data directory.
 .TP
-\fBviewall\fP
+\fB\-\-viewall\fP
 Show all entries in chronological order in the program specified in
-your \fBPAGER\fP environment variable.
+your \fB$PAGER\fP environment variable.
 .TP
-\fBpull\fP
+\fB\-\-pull\fP
 Pulls from your git remote by doing a \fBgit pull\fP in the data
 directory. Does not check whether such a remote exists.
-.SH NOTES
+.SH CONFIGURATION
+All your entries are stored in the data directory. A git repository will
+reside in this directory. By default, \fI$XDG_DATA_HOME/gitary\fP will
+be used or \fI$HOME/.local/share/gitary\fP if \fB$XDG_DATA_HOME\fP is
+not set. However, you can overwrite this value using a configuration
+file. Furthermore, you can specify which pager and editor you'd like to
+use. They default to \fB$EDITOR\fP and \fB$PAGER\fP, respectively.
+.P
+The configuration file is a simple Bash script that will be sourced by
+the main script. It can look like this:
+.P
+\f(CW
+.nf
+	# Where's your data?
+	DATADIR=/path/to/data
+
+	# Which programs do you wish to use as editor and pager?
+	EDITOR=(vim)
+	PAGER=(vim -R - -c "set ft=gitary")
+.fi
+\fP
+.P
+Note that \fB$EDITOR\fP and \fB$PAGER\fP are Bash arrays. This allows
+you to easily use spaces in the arguments for your programs. Don't
+worry, the default environment variables \fB$EDITOR\fP and \fB$PAGER\fP
+can still be used \(em they'll be converted to Bash arrays internally.
+.P
 You have to do a \fBgit init\fP the data repository before you can use
 this script. However, if you don't do this, the script will ask you what
 to do.
 .P
-There's a syntax highlighting scheme for
-.BR vim (1)
-ready to be used in the \fB.vim/\fP subdirectory. Thus, you should get
-the best experience when using this script together with \fBvim\fP.
+The location of the configuration file is
+\fI$XDG_CONFIG_HOME/gitaryrc\fP or \fI$HOME/.config/gitaryrc\fP if
+\fB$XDG_CONFIG_HOME\fP is not set.
+.SH SYNTAX
+Each entry should follow the following format:
+.P
+\f(CW
+.nf
+	=== Topics of today ===
+	tags: linux git
+
+	Today I discovered Git. It rocks. Can be downloaded from [1].
+
+	Some code:
+	---8<---
+	$ git init whatever
+	$ touch hello
+	$ git add hello && git ci -m 'Initial'
+	---8<---
+
+	[1] http://git-scm.com/
+
+	Some further references:
+	-- http://en.wikiquote.org/wiki/Einstein
+	-- http://en.wikiquote.org/wiki/Monty_Python%27s_Flying_Circus
+.fi
+\fP
+.P
+The head line is mandatory as is the \(lqtags\(rq line. The search
+routines use the head line to split up entries. Also, there's a special
+search function that can search in the \(lqtags\(rq line only (using
+\fB\-\-tags\fP). All other content can be free form. However, there's a
+special search function for \(lqreferences\(rq, too (using
+\fB\-\-refs\fP).
+.P
+There's a syntax highlighting scheme for \fBvim\fR(1) ready to be used
+in the \fB.vim/\fP subdirectory. Thus, you should get the best
+experience when using this script together with \fBvim\fP. If you use
+it, you can also add the language of code areas:
+.P
+\f(CW
+.nf
+	This will be highlighted as a regular bash script:
+	---8<---bash
+	for i in *
+	do
+		echo "<$i>"
+	done
+	---8<---
+
+	That's a python script:
+	---8<---python
+	print "Hello world."
+	---8<---
+.fi
+\fP
+.P
+Currently, there's support for \fBbash\fP, \fBpython\fP, \fBruby\fP,
+\fBjava\fP, \fBc\fP, \fBlua\fP, \fBvim\fP and \fBdiff\fP.
+.SH FILES
+.TP
+\fI$XDG_CONFIG_HOME/gitaryrc\fP
+Per-user configuration.
+.TP
+\fI$HOME/.config/gitary\fP
+Per-user configuration if \fB$XDG_CONFIG_HOME\fP is not set.
+.TP
+\fI$XDG_DATA_HOME/gitary/\fP
+Default per-used data directory. May be overwritten with a user setting.
+.TP
+\fI$HOME/.local/share/gitary/\fP
+Default per-used data directory if \fB$XDG_DATA_HOME\fP is not set. May
+be overwritten with a user setting.
