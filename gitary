@@ -18,11 +18,10 @@ PAGER="${PAGER:-less}"
 EDITOR=("$EDITOR")
 PAGER=("$PAGER")
 
-# Read user settings, maybe overwrite defaults.
-if [[ -f .gitaryrc ]]
-then
-	source .gitaryrc
-fi
+# Read user settings, maybe overwrite defaults. Try $XDG_CONFIG_HOME and
+# use $HOME/.config as a fallback.
+CONFIGFILE="${XDG_CONFIG_HOME:-$HOME/.config}/gitaryrc"
+[[ -f "$CONFIGFILE" ]] && source "$CONFIGFILE"
 
 checkdatadir
 
