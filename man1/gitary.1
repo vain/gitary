@@ -41,6 +41,18 @@ Launch \fBgitk\fP(1) in the data directory.
 Show all entries in chronological order in the program specified in
 your \fB$PAGER\fP environment variable.
 .TP
+\fB\-\-topics\fP [\fIdate\fP [\fIdate\fP]]
+Only show topics. \fIdate\fP can be one of \fIyear\fP, \fIyear-month\fP
+or \fIyear-month-day\fP. If only one \fIdate\fP is given, show all
+topics of this date. That is, \(lq\-\-topics 2009-11\(rq shows all
+topics of November 2009. Accordingly, \(lq\-\-topics 2010-02-03\(rq
+shows all topics of the 3rd of February 2010.
+
+If two \fIdate\fPs are given, then show all topics written during that
+period of time. \(lq\-\-topics 2009-11 2010-03-12\(rq will show all
+topics from the 1st of November 2009 until the 12th of March 2010
+(inclusively).
+.TP
 \fB\-\-pull\fP
 Pulls from your git remote by doing a \fBgit pull\fP in the data
 directory. Does not check whether such a remote exists.
