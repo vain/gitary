@@ -65,6 +65,12 @@ case "$1" in
 		# Show all entries in chronological order.
 		viewall
 		;;
+	topics|-topics|--topics)
+		# Show all topics. A time range may be given as an optional
+		# argument.
+		shift
+		topics "$@"
+		;;
 	*)
 		# Create a new entry for today.
 		edit "$(date +%F).gitary"

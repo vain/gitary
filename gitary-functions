@@ -77,6 +77,80 @@ function viewall()
 	) | "${PAGER[@]}"
 }
 
+function date_complete()
+{
+	# Given an incomplete date like "2010" or "2010-01", add the missing
+	# part such that it points to the beginning of that time span. For
+	# example, extend "2010" with "-01-01" meaning the very first moment
+	# of the year 2010.
+
+	OIFS=$IFS
+	IFS='-'
+	set -- $1
+	IFS=$OIFS
+
+	case $# in
+		1) echo $1-01-01 ;;
+		2) echo $1-$2-01 ;;
+		3) echo $1-$2-$3 ;;
+	esac
+}
+
+function date_complete_next()
+{
+	# Like date_complete, but add one "entity". That is, "2010" will
+	# become "2011" and "2010-04-12" will become "2010-04-13".
+
+	OIFS=$IFS
+	IFS='-'
+	set -- $1
+	IFS=$OIFS
+
+	case $# in
+		1) echo $(($1 + 1))-01-01                   ;;
+		2) echo $(date -d "$1-$2-01 + 1 month" +%F) ;;
+		3) echo $(date -d "$1-$2-$3 + 1 day" +%F)   ;;
+	esac
+}
+
+function topics()
+{
+	case $# in
+		0)
+			# Show all topics.
+			r_start="0"
+			r_end="z"
+			;;
+		1)
+			# Show topics of one year, month or day.
+			r_start=$(date_complete $1)
+			r_end=$(date_complete_next $1)
+			;;
+		2)
+			# Show all topics in a given range.
+			r_start=$(date_complete $1)
+			r_end=$(date_complete_next $2)
+			;;
+		*)
+			return 1
+			;;
+	esac
+
+	# Search matching filenames and print their topics.
+	for i in *gitary
+	do
+		day=${i%.gitary}
+		if [[ $day > $r_start ]] ||
+			[[ $day == $r_start ]] &&
+			[[ $day < $r_end ]]
+		then
+			# Extract all topic lines from that file.
+			echo "${i%.gitary}"
+			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
+		fi
+	done | "${PAGER[@]}"
+}
+
 function checkdatadir()
 {
 	if [[ ! -d "$DATADIR" ]]
