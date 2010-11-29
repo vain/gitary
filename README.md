@@ -20,14 +20,13 @@ You may also want to have a look at the example configuration file.
 Dependencies
 ------------
 
-* [bash](http://www.gnu.org/software/bash/bash.html)
-* [gawk](http://www.gnu.org/directory/GNU/gawk.html) for searching your
+* [bash](http://www.gnu.org/software/bash/bash.html).
+* [GNU awk](http://www.gnu.org/software/gawk/) and
+  [GNU sed](http://www.gnu.org/software/sed/) for searching your
   entries.
 * [man](http://www.nongnu.org/man-db/) which will also pull
   [groff](http://www.gnu.org/software/groff/groff.html) is needed to
-  display the help page. You also need
-  [less](http://www.greenwoodsoftware.com/less) to show the help page
-  but you really should have that one installed anyway.
+  display the help page from inside the program.
 * [git](http://git-scm.com/). Whoa.
 
 
