@@ -56,7 +56,7 @@ case "$1" in
 	pull|-pull|--pull)
 		git pull
 		;;
-	edit|-edit|--edit)
+	edit|-edit|--edit|view|-view|--view)
 		# Edit or create an arbitrary entry.
 		shift
 		edit "$1.gitary"

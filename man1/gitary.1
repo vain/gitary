@@ -30,9 +30,19 @@ of a line \(em but you can also use a number in square brackets instead.
 Search entire entries. Same as \fB\-\-tags\fP but searching is not
 limited to taglines or references.
 .TP
+.PD 0
 \fB\-\-edit\fP \fIday\fP
+.TP
+.PD
+\fB\-\-view\fP \fIday\fP
 Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.
 \fI2009\-09\-31\fP.
+
+\fB\-\-view\fP is an alias for \fB\-\-edit\fP. That's because if there's
+a \fB\-\-viewall\fP (see below), then there must be a simple
+\fB\-\-view\fP, too.
+
+Note that you can't view an entry in read-only mode.
 .TP
 \fB\-\-gitk\fP
 Launch \fBgitk\fP(1) in the data directory.
