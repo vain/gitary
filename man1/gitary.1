@@ -1,4 +1,4 @@
-.TH GITARY 1  "September 2010" "Git-Diary" "A diary using Git"
+.TH GITARY 1  "August 2011" "Git-Diary" "A diary using Git"
 .SH NAME
 gitary \- a diary using
 .BR git (1)
@@ -70,36 +70,17 @@ directory. Does not check whether such a remote exists.
 All your entries are stored in the data directory. A git repository will
 reside in this directory. By default, \fI$XDG_DATA_HOME/gitary\fP will
 be used or \fI$HOME/.local/share/gitary\fP if \fB$XDG_DATA_HOME\fP is
-not set. However, you can overwrite this value using a configuration
-file. Furthermore, you can specify which pager and editor you'd like to
-use. They default to \fB$EDITOR\fP and \fB$PAGER\fP, respectively.
+not set.
 .P
-The configuration file is a simple Bash script that will be sourced by
-the main script. It can look like this:
+Use the environment variable \fB$GITARY_DATA\fP to change this. If it's
+set, then this directory is used.
 .P
-\f(CW
-.nf
-	# Where's your data?
-	DATADIR=/path/to/data
-
-	# Which programs do you wish to use as editor and pager?
-	EDITOR=(vim)
-	PAGER=(vim -R - -c "set ft=gitary")
-.fi
-\fP
+You have to do a \fBgit init\fP in the data repository before you can
+use this script. However, if the directory does not exist, the script
+will ask you what to do.
 .P
-Note that \fB$EDITOR\fP and \fB$PAGER\fP are Bash arrays. This allows
-you to easily use spaces in the arguments for your programs. Don't
-worry, the default environment variables \fB$EDITOR\fP and \fB$PAGER\fP
-can still be used \(em they'll be converted to Bash arrays internally.
-.P
-You have to do a \fBgit init\fP the data repository before you can use
-this script. However, if you don't do this, the script will ask you what
-to do.
-.P
-The location of the configuration file is
-\fI$XDG_CONFIG_HOME/gitaryrc\fP or \fI$HOME/.config/gitaryrc\fP if
-\fB$XDG_CONFIG_HOME\fP is not set.
+\fBgitary\fP uses whichever \fB$EDITOR\fP and \fB$PAGER\fP you
+configured in your \fI~/.profile\fP.
 .SH SYNTAX
 Each entry should follow the following format:
 .P
@@ -155,18 +136,14 @@ it, you can also add the language of code areas:
 \fP
 .P
 Currently, there's support for \fBbash\fP, \fBpython\fP, \fBruby\fP,
-\fBjava\fP, \fBc\fP, \fBlua\fP, \fBvim\fP and \fBdiff\fP.
+\fBjava\fP, \fBc\fP, \fBlua\fP, \fBvim\fP, \fBassembly\fP and
+\fBdiff\fP.
 .SH FILES
 .TP
-\fI$XDG_CONFIG_HOME/gitaryrc\fP
-Per-user configuration.
-.TP
-\fI$HOME/.config/gitary\fP
-Per-user configuration if \fB$XDG_CONFIG_HOME\fP is not set.
-.TP
+.PD 0
 \fI$XDG_DATA_HOME/gitary/\fP
-Default per-used data directory. May be overwritten with a user setting.
 .TP
+.PD
 \fI$HOME/.local/share/gitary/\fP
-Default per-used data directory if \fB$XDG_DATA_HOME\fP is not set. May
-be overwritten with a user setting.
+Default per-user data directory if \fB$GITARY_DATA\fP is not set. The
+\fB$HOME\fP variant is only used if \fB$XDG_DATA_HOME\fP is not set.
