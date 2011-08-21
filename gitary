@@ -6,20 +6,11 @@ BASEDIR=$(dirname "$(readlink -e "$0")")
 # Include further functions.
 source "$BASEDIR/gitary-functions" || exit 1
 
-# Default settings.
-DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}/gitary"
-EDITOR="${EDITOR:-vim}"
-PAGER="${PAGER:-less}"
-
-# EDITOR and PAGER must be arrays. That's the only way to allow spaces
-# in arguments (see config).
-EDITOR=("$EDITOR")
-PAGER=("$PAGER")
-
-# Read user settings, maybe overwrite defaults. Try $XDG_CONFIG_HOME and
-# use $HOME/.config as a fallback.
-CONFIGFILE="${XDG_CONFIG_HOME:-$HOME/.config}/gitaryrc"
-[[ -f "$CONFIGFILE" ]] && source "$CONFIGFILE"
+# Use default settings as fallback.
+DEFAULT_PREFIX=${XDG_DATA_HOME:-$HOME/.local/share}
+DATADIR=${GITARY_DATA:-$DEFAULT_PREFIX/gitary}
+EDITOR=${EDITOR:-vim}
+PAGER=${PAGER:-less}
 
 # Check if the user only wants to view the help page. If so, display it
 # and exit. This does not check whether the data dir exists.

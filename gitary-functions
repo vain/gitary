@@ -44,12 +44,12 @@ function search()
 			print "\n";                                                 \
 			print "=== " $0 "\n\n\n\n";                                 \
 		}'                                                              \
-		*gitary | "${PAGER[@]}"
+		*gitary | $PAGER
 }
 
 function edit()
 {
-	"${EDITOR[@]}" "$1"
+	$EDITOR "$1"
 	git add .
 	git ci -m "Auto-Commit $(date +'%F, %T')"
 }
@@ -74,7 +74,7 @@ function viewall()
 		echo
 		echo
 	done
-	) | "${PAGER[@]}"
+	) | $PAGER
 }
 
 function date_complete()
@@ -148,7 +148,7 @@ function topics()
 			echo "${i%.gitary}"
 			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
 		fi
-	done | "${PAGER[@]}"
+	done | $PAGER
 }
 
 function checkdatadir()
