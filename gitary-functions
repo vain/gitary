@@ -6,53 +6,53 @@ function search()
 	case "$1" in
 		-a)
 			shift
-			PREFIX=""
-			MSGPREFIX="everything"
+			prefix=""
+			msgprefix="everything"
 			;;
 		-r)
 			shift
-			PREFIX="\n(-- |\[[[:digit:]]+\])[^\n]*"
-			MSGPREFIX="references"
+			prefix="\n(-- |\[[[:digit:]]+\])[^\n]*"
+			msgprefix="references"
 			;;
 		*)
-			PREFIX="\ntags:[^\n]*"
-			MSGPREFIX="tags"
+			prefix="\ntags:[^\n]*"
+			msgprefix="tags"
 	esac
 
-	SEARCH="$@"
+	search="$@"
 
 	# "Explode" the list of tags. This'll result in a list of
 	# alternative search terms (boolean OR).
-	SEARCH='('${SEARCH//[[:space:]]/|}')'
+	search='('${search//[[:space:]]/|}')'
 
 	# gawk will do all the magic.
 	gawk '                                                              \
 		BEGIN                                                           \
 		{                                                               \
 			RS="=== ";                                                  \
-			print "Searching '"${MSGPREFIX}"' for: '"${SEARCH}"'\n\n";  \
+			print "Searching '"${msgprefix}"' for: '"${search}"'\n\n";  \
 		};                                                              \
 		                                                                \
-		/'"${PREFIX}${SEARCH}"'/                                        \
+		/'"${prefix}${search}"'/                                        \
 		{                                                               \
-			ENTRYDATE=FILENAME;                                         \
-			gsub(/\.gitary/, "", ENTRYDATE);                            \
-			gsub(/^.*\//, "", ENTRYDATE);                               \
+			entrydate=FILENAME;                                         \
+			gsub(/\.gitary/, "", entrydate);                            \
+			gsub(/^.*\//, "", entrydate);                               \
 			gsub(/\n+$/, "", $0);                                       \
 			print "#############################################";      \
-			print "               DAY: " ENTRYDATE;                     \
+			print "               DAY: " entrydate;                     \
 			print "#############################################";      \
 			print "\n";                                                 \
 			print "=== " $0 "\n\n\n\n";                                 \
 		}'                                                              \
-		"$DATADIR"/*gitary | $PAGER
+		"$datadir"/*gitary | $pager
 }
 
 function edit()
 {
 	(
-		cd "$DATADIR"
-		$EDITOR "$1"
+		cd "$datadir"
+		$editor "$1"
 		git add .
 		git ci -m "Auto-Commit $(date +'%F, %T')"
 	)
@@ -63,12 +63,12 @@ function viewall()
 	(
 		echo
 		echo
-		for i in "$DATADIR"/*gitary
+		for i in "$datadir"/*gitary
 		do
-			BNAME=$(basename "$i")
-			BNAME=${BNAME%%.*}
+			bname=$(basename "$i")
+			bname=${bname%%.*}
 			echo "#############################################"
-			echo "               DAY: $BNAME"
+			echo "               DAY: $bname"
 			echo "#############################################"
 			echo
 			echo
@@ -78,7 +78,7 @@ function viewall()
 			echo
 			echo
 		done
-	) | $PAGER
+	) | $pager
 }
 
 function date_complete()
@@ -141,7 +141,7 @@ function topics()
 	esac
 
 	# Search matching filenames and print their topics.
-	for i in "$DATADIR"/*gitary
+	for i in "$datadir"/*gitary
 	do
 		day=$(basename "$i")
 		day=${day%%.*}
@@ -153,21 +153,21 @@ function topics()
 			echo "$day"
 			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
 		fi
-	done | $PAGER
+	done | $pager
 }
 
 function checkdatadir()
 {
-	if [[ ! -d "$DATADIR" ]]
+	if [[ ! -d "$datadir" ]]
 	then
-		echo "The data directory ($DATADIR) does not exist yet."
+		echo "The data directory ($datadir) does not exist yet."
 		read -p "Would you like to create it now? [y/N] "
 
 		if [[ "$REPLY" == "Y" ]] || [[ "$REPLY" == "y" ]]
 		then
-			mkdir -p "$DATADIR" || exit 1
+			mkdir -p "$datadir" || exit 1
 			(
-				cd "$DATADIR" || exit 1
+				cd "$datadir" || exit 1
 				git init || exit 1
 			) || exit 1
 		else

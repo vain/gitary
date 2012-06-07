@@ -1,22 +1,22 @@
 #!/bin/bash
 
 # Get the real basedir by resolving any links.
-BASEDIR=$(dirname "$(readlink -e "$0")")
+basedir=$(dirname "$(readlink -e "$0")")
 
 # Include further functions.
-source "$BASEDIR/gitary-functions" || exit 1
+source "$basedir/gitary-functions" || exit 1
 
 # Use default settings as fallback.
-DEFAULT_PREFIX=${XDG_DATA_HOME:-$HOME/.local/share}
-DATADIR=${GITARY_DATA:-$DEFAULT_PREFIX/gitary}
-EDITOR=${EDITOR:-vim}
-PAGER=${PAGER:-less}
+default_prefix=${XDG_DATA_HOME:-$HOME/.local/share}
+datadir=${GITARY_DATA:-$default_prefix/gitary}
+editor=${EDITOR:-vim}
+pager=${PAGER:-less}
 
 # Check if the user only wants to view the help page. If so, display it
 # and exit. This does not check whether the data dir exists.
 case "$1" in
 	help|-h|-help|--help)
-		man -M "$BASEDIR" gitary
+		man -M "$basedir" gitary
 		exit 1
 		;;
 esac
@@ -42,7 +42,7 @@ case "$1" in
 		;;
 	gitk|-gitk|--gitk)
 		(
-			cd "$DATADIR"
+			cd "$datadir"
 			gitk --all
 		)
 		;;
