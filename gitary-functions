@@ -61,23 +61,23 @@ function edit()
 function viewall()
 {
 	(
-	echo
-	echo
-	for i in "$DATADIR"/*gitary
-	do
-		BNAME=$(basename "$i")
-		BNAME=${BNAME%%.*}
-		echo "#############################################"
-		echo "               DAY: $BNAME"
-		echo "#############################################"
 		echo
 		echo
-		cat "$i"
-		echo
-		echo
-		echo
-		echo
-	done
+		for i in "$DATADIR"/*gitary
+		do
+			BNAME=$(basename "$i")
+			BNAME=${BNAME%%.*}
+			echo "#############################################"
+			echo "               DAY: $BNAME"
+			echo "#############################################"
+			echo
+			echo
+			cat "$i"
+			echo
+			echo
+			echo
+			echo
+		done
 	) | $PAGER
 }
 
