@@ -24,49 +24,51 @@ esac
 # Okay, now check the data dir and process all other options.
 checkdatadir || exit 1
 
-case "$1" in
-	tags|-tags|--tags)
+# Remove up to two leading dashes from $1.
+opt=${1#-}
+case "${opt#-}" in
+	tags)
 		# Only search for tags.
 		shift
 		search "$@"
 		;;
-	refs|-refs|--refs)
+	refs)
 		# Only search for references.
 		shift
 		search -r "$@"
 		;;
-	search|-search|--search)
+	search)
 		# Search whole entries.
 		shift
 		search -a "$@"
 		;;
-	gitk|-gitk|--gitk)
+	gitk)
 		(
 			cd "$datadir"
 			gitk --all
 		)
 		;;
-	edit|-edit|--edit|view|-view|--view)
+	edit|view)
 		# Edit or create an arbitrary entry.
 		shift
 		edit "$@"
 		;;
-	viewall|-viewall|--viewall)
+	viewall)
 		# Show all entries in chronological order.
 		viewall
 		;;
-	topics|-topics|--topics)
+	topics)
 		# Show all topics. A time range may be given as an optional
 		# argument.
 		shift
 		topics "$@"
 		;;
-	addblobs|-addblobs|--addblobs)
+	addblobs)
 		# Add all files as blobs for the current day.
 		shift
 		addblobs "$@"
 		;;
-	printblobdir|-printblobdir|--printblobdir)
+	printblobdir)
 		# Prints the blob directory, so you can easily work with it.
 		printblobdir
 		;;
