@@ -44,9 +44,6 @@ case "$1" in
 	gitk|-gitk|--gitk)
 		gitk --all
 		;;
-	pull|-pull|--pull)
-		git pull
-		;;
 	edit|-edit|--edit|view|-view|--view)
 		# Edit or create an arbitrary entry.
 		shift
