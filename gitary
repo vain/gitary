@@ -61,6 +61,15 @@ case "$1" in
 		shift
 		topics "$@"
 		;;
+	addblobs|-addblobs|--addblobs)
+		# Add all files as blobs for the current day.
+		shift
+		addblobs "$@"
+		;;
+	printblobdir|-printblobdir|--printblobdir)
+		# Prints the blob directory, so you can easily work with it.
+		printblobdir
+		;;
 	*)
 		# Create a new entry for today.
 		edit "$(date +%F)"

@@ -62,6 +62,23 @@ If two \fIdate\fPs are given, then show all topics written during that
 period of time. \(lq\-\-topics 2009-11 2010-03-12\(rq will show all
 topics from the 1st of November 2009 until the 12th of March 2010
 (inclusively).
+.TP
+\fB\-\-addblobs\fP [\fIfile ...\fP]
+Add all files to today's blobs. That is, a directory called
+\(lqblobs\(rq will be created in your data directory. Below this, a
+subdirectory for each day will be created (like
+\(lq\fIblobs/2012-06-07/\fP\(rq). \fBgitary\fP will never overwrite
+existing files.
+.TP
+\fB\-\-printblobdir\fP
+Prints the absolute path to your blob directory on \fIstdout\fP. This
+can be used to create a shell alias like this:
+.P
+\f(CW
+.nf
+	alias gblobs='cd -- "$(gitary --printblobdir)"'
+.fi
+\fP
 .SH CONFIGURATION
 All your entries are stored in the data directory. A git repository will
 reside in this directory. By default, \fI$XDG_DATA_HOME/gitary\fP will

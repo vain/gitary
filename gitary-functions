@@ -185,4 +185,27 @@ function checkdatadir()
 	fi
 }
 
+function addblobs()
+{
+	# Create a new subdirectory for today. %F is locale-independent.
+	subdir="$datadir/blobs/$(date +%F)"
+	mkdir -p "$subdir" || return 1
+
+	for i
+	do
+		# Never overwrite existing files. cp doesn't inform us about
+		# existing files, though, so show a warning.
+		fname="$subdir/$(basename "$i")"
+		[[ -e "$fname" ]] && echo "\`$i' already exists in today's blobs." >&2
+		cp -n "$i" "$fname"
+	done
+
+	commit
+}
+
+function printblobdir()
+{
+	readlink -e "$datadir/blobs"
+}
+
 # vim: set ts=4 sw=4 :
