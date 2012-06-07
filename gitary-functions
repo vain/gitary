@@ -156,14 +156,15 @@ function checkdatadir()
 	if [[ ! -d "$DATADIR" ]]
 	then
 		echo "The data directory ($DATADIR) does not exist yet."
-		read -p "Would you like to create it now? [y/N] " ANSWER
+		read -p "Would you like to create it now? [y/N] "
 
-		if [[ "$ANSWER" == "Y" ]] || [[ "$ANSWER" == "y" ]]
+		if [[ "$REPLY" == "Y" ]] || [[ "$REPLY" == "y" ]]
 		then
 			mkdir -p "$DATADIR" || exit 1
-			cd "$DATADIR" || exit 1
-			git init || exit 1
-			cd - || exit 1
+			(
+				cd "$DATADIR" || exit 1
+				git init || exit 1
+			) || exit 1
 		else
 			exit 1
 		fi
