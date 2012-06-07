@@ -49,7 +49,7 @@ case "$1" in
 	edit|-edit|--edit|view|-view|--view)
 		# Edit or create an arbitrary entry.
 		shift
-		edit "$1.gitary"
+		edit "$@"
 		;;
 	viewall|-viewall|--viewall)
 		# Show all entries in chronological order.
@@ -63,7 +63,7 @@ case "$1" in
 		;;
 	*)
 		# Create a new entry for today.
-		edit "$(date +%F).gitary"
+		edit "$(date +%F)"
 		;;
 esac
 

@@ -52,7 +52,10 @@ function edit()
 {
 	(
 		cd "$datadir"
-		$editor "$1"
+		for i
+		do
+			$editor "$i.gitary"
+		done
 		git add .
 		git ci -m "Auto-Commit $(date +'%F, %T')"
 	)
