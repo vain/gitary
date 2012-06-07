@@ -23,7 +23,6 @@ esac
 
 # Okay, now check the data dir and process all other options.
 checkdatadir
-cd "$DATADIR" || exit 1
 
 case "$1" in
 	tags|-tags|--tags)
@@ -42,7 +41,10 @@ case "$1" in
 		search -a "$@"
 		;;
 	gitk|-gitk|--gitk)
-		gitk --all
+		(
+			cd "$DATADIR"
+			gitk --all
+		)
 		;;
 	edit|-edit|--edit|view|-view|--view)
 		# Edit or create an arbitrary entry.

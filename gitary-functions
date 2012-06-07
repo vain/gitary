@@ -37,6 +37,7 @@ function search()
 		{                                                               \
 			ENTRYDATE=FILENAME;                                         \
 			gsub(/\.gitary/, "", ENTRYDATE);                            \
+			gsub(/^.*\//, "", ENTRYDATE);                               \
 			gsub(/\n+$/, "", $0);                                       \
 			print "#############################################";      \
 			print "               DAY: " ENTRYDATE;                     \
@@ -44,14 +45,17 @@ function search()
 			print "\n";                                                 \
 			print "=== " $0 "\n\n\n\n";                                 \
 		}'                                                              \
-		*gitary | $PAGER
+		"$DATADIR"/*gitary | $PAGER
 }
 
 function edit()
 {
-	$EDITOR "$1"
-	git add .
-	git ci -m "Auto-Commit $(date +'%F, %T')"
+	(
+		cd "$DATADIR"
+		$EDITOR "$1"
+		git add .
+		git ci -m "Auto-Commit $(date +'%F, %T')"
+	)
 }
 
 function viewall()
@@ -59,7 +63,7 @@ function viewall()
 	(
 	echo
 	echo
-	for i in *gitary
+	for i in "$DATADIR"/*gitary
 	do
 		BNAME=$(basename "$i")
 		BNAME=${BNAME%%.*}
@@ -137,15 +141,16 @@ function topics()
 	esac
 
 	# Search matching filenames and print their topics.
-	for i in *gitary
+	for i in "$DATADIR"/*gitary
 	do
-		day=${i%.gitary}
+		day=$(basename "$i")
+		day=${day%%.*}
 		if [[ $day > $r_start ]] ||
 			[[ $day == $r_start ]] &&
 			[[ $day < $r_end ]]
 		then
 			# Extract all topic lines from that file.
-			echo "${i%.gitary}"
+			echo "$day"
 			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
 		fi
 	done | $PAGER
