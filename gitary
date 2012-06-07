@@ -22,7 +22,7 @@ case "$1" in
 esac
 
 # Okay, now check the data dir and process all other options.
-checkdatadir
+checkdatadir || exit 1
 
 case "$1" in
 	tags|-tags|--tags)

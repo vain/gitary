@@ -174,13 +174,13 @@ function checkdatadir()
 
 		if [[ "$REPLY" == "Y" ]] || [[ "$REPLY" == "y" ]]
 		then
-			mkdir -p "$datadir" || exit 1
+			mkdir -p "$datadir" || return 1
 			(
-				cd "$datadir" || exit 1
-				git init || exit 1
-			) || exit 1
+				cd "$datadir" || return 1
+				git init || return 1
+			) || return 1
 		else
-			exit 1
+			return 1
 		fi
 	fi
 }
