@@ -1,5 +1,14 @@
 #!/bin/bash
 
+function commit()
+{
+	(
+		cd "$datadir"
+		git add .
+		git commit -a -m "Auto-Commit $(date +'%F, %T')."
+	)
+}
+
 function search()
 {
 	# Only search in tags or the whole entry? Only refs?
@@ -50,15 +59,12 @@ function search()
 
 function edit()
 {
-	(
-		cd "$datadir"
-		for i
-		do
-			$editor "$i.gitary"
-		done
-		git add .
-		git ci -m "Auto-Commit $(date +'%F, %T')"
-	)
+	for i
+	do
+		$editor "$datadir/$i.gitary"
+	done
+
+	commit
 }
 
 function viewall()
