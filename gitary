@@ -64,7 +64,7 @@ case "${opt#-}" in
 		# Show all entries in chronological order.
 		viewall
 		;;
-	topics)
+	alltopics)
 		# Show all topics. A time range may be given as an optional
 		# argument.
 		shift
