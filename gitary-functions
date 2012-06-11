@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function commit()
+commit()
 {
 	(
 		cd "$datadir"
@@ -9,7 +9,7 @@ function commit()
 	)
 }
 
-function search()
+search()
 {
 	# Only search in tags or the whole entry? Only refs?
 	case "$1" in
@@ -57,7 +57,7 @@ function search()
 		"$datadir"/*gitary | $pager
 }
 
-function edit()
+edit()
 {
 	for i
 	do
@@ -67,7 +67,7 @@ function edit()
 	commit
 }
 
-function viewall()
+viewall()
 {
 	(
 		echo
@@ -90,7 +90,7 @@ function viewall()
 	) | $pager
 }
 
-function date_complete()
+date_complete()
 {
 	# Given an incomplete date like "2010" or "2010-01", add the missing
 	# part such that it points to the beginning of that time span. For
@@ -109,7 +109,7 @@ function date_complete()
 	esac
 }
 
-function date_complete_next()
+date_complete_next()
 {
 	# Like date_complete, but add one "entity". That is, "2010" will
 	# become "2011" and "2010-04-12" will become "2010-04-13".
@@ -126,7 +126,7 @@ function date_complete_next()
 	esac
 }
 
-function topics()
+topics()
 {
 	case $# in
 		0)
@@ -165,7 +165,7 @@ function topics()
 	done | $pager
 }
 
-function checkdatadir()
+checkdatadir()
 {
 	if [[ ! -d "$datadir" ]]
 	then
@@ -185,7 +185,7 @@ function checkdatadir()
 	fi
 }
 
-function addblobs()
+addblobs()
 {
 	# Set a tag for these blobs? Essentially, a tag is a subdirectory.
 	case "$1" in
@@ -215,7 +215,7 @@ function addblobs()
 	commit
 }
 
-function printblobdir()
+printblobdir()
 {
 	readlink -e "$datadir/blobs"
 }
