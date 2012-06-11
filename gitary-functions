@@ -131,7 +131,8 @@ find_date_ranges()
 	case $# in
 		0)
 			# Show all topics.
-			echo 0 z
+			echo 0
+			echo z
 			;;
 		1)
 			# Show topics of one year, month or day.
@@ -148,16 +149,16 @@ find_date_ranges()
 
 alltopics()
 {
-	read r_start r_end < <(find_date_ranges)
+	range=($(find_date_ranges "$@"))
 
 	# Search matching filenames and print their topics.
 	for i in "$datadir"/*gitary
 	do
 		day=$(basename "$i")
 		day=${day%%.*}
-		if [[ $day > $r_start ]] ||
-			[[ $day == $r_start ]] &&
-			[[ $day < $r_end ]]
+		if [[ $day > ${range[0]} ]] ||
+			[[ $day == ${range[0]} ]] &&
+			[[ $day < ${range[1]} ]]
 		then
 			# Extract all topic lines from that file.
 			echo "$day"
@@ -168,16 +169,16 @@ alltopics()
 
 alltags()
 {
-	read r_start r_end < <(find_date_ranges)
+	range=($(find_date_ranges "$@"))
 
 	# Search matching filenames and grab their tags.
 	for i in "$datadir"/*gitary
 	do
 		day=$(basename "$i")
 		day=${day%%.*}
-		if [[ $day > $r_start ]] ||
-			[[ $day == $r_start ]] &&
-			[[ $day < $r_end ]]
+		if [[ $day > ${range[0]} ]] ||
+			[[ $day == ${range[0]} ]] &&
+			[[ $day < ${range[1]} ]]
 		then
 			# Extract all tag lines from that file.
 			echo "$day"
@@ -188,7 +189,7 @@ alltags()
 
 tagcloud()
 {
-	read r_start r_end < <(find_date_ranges)
+	range=($(find_date_ranges "$@"))
 
 	# Search matching filenames and grab their tags.
 	declare -A tagcounts
@@ -196,9 +197,9 @@ tagcloud()
 	do
 		day=$(basename "$i")
 		day=${day%%.*}
-		if [[ $day > $r_start ]] ||
-			[[ $day == $r_start ]] &&
-			[[ $day < $r_end ]]
+		if [[ $day > ${range[0]} ]] ||
+			[[ $day == ${range[0]} ]] &&
+			[[ $day < ${range[1]} ]]
 		then
 			# Extract all tag lines from that file, replace spaces
 			# between tags into newlines. sort and uniq will do the
