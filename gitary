@@ -24,6 +24,13 @@ esac
 # Okay, now check the data dir and process all other options.
 checkdatadir || exit 1
 
+if [[ -z "$1" ]]
+then
+	# Create a new entry for today.
+	edit "$(date +%F)"
+	exit
+fi
+
 # Remove up to two leading dashes from $1.
 opt=${1#-}
 case "${opt#-}" in
@@ -73,8 +80,8 @@ case "${opt#-}" in
 		printblobdir
 		;;
 	*)
-		# Create a new entry for today.
-		edit "$(date +%F)"
+		echo "$(basename "$0"): Invalid option \`$1'. See man page." >&2
+		exit 1
 		;;
 esac
 
