@@ -63,12 +63,19 @@ period of time. \(lq\-\-topics 2009-11 2010-03-12\(rq will show all
 topics from the 1st of November 2009 until the 12th of March 2010
 (inclusively).
 .TP
-\fB\-\-addblobs\fP [\fIfile ...\fP]
+\fB\-\-addblobs\fP [\fB\-t\fP \fItag\fP] [\fIfile ...\fP]
 Add all files to today's blobs. That is, a directory called
 \(lqblobs\(rq will be created in your data directory. Below this, a
 subdirectory for each day will be created (like
 \(lq\fIblobs/2012-06-07/\fP\(rq). \fBgitary\fP will never overwrite
 existing files.
+
+Using \fB\-t\fP you can specify a \(lqtag\(rq for your blobs.
+Essentially, a subdirectory with that name will be created in today's
+blobs (like \fB\-t code\fP for \(lq\fIblobs/2012-06-07/code/\fP).
+
+Note: Unlike other options, you can't omit the leading dash in
+\fB\-t\fP.
 .TP
 \fB\-\-printblobdir\fP
 Prints the absolute path to your blob directory on \fIstdout\fP. This

@@ -187,8 +187,20 @@ function checkdatadir()
 
 function addblobs()
 {
+	# Set a tag for these blobs? Essentially, a tag is a subdirectory.
+	case "$1" in
+		-t)
+			tag="$2"
+			shift
+			shift
+			;;
+		*)
+			tag=
+			;;
+	esac
+
 	# Create a new subdirectory for today. %F is locale-independent.
-	subdir="$datadir/blobs/$(date +%F)"
+	subdir="$datadir/blobs/$(date +%F)/$tag"
 	mkdir -p "$subdir" || return 1
 
 	for i
