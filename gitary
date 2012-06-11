@@ -68,7 +68,13 @@ case "${opt#-}" in
 		# Show all topics. A time range may be given as an optional
 		# argument.
 		shift
-		topics "$@"
+		alltopics "$@"
+		;;
+	alltags)
+		# Show all tags. Similar to --alltopics, a time range may be
+		# given.
+		shift
+		alltags "$@"
 		;;
 	addblobs)
 		# Add all files as blobs for the current day.

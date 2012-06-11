@@ -126,28 +126,29 @@ date_complete_next()
 	esac
 }
 
-topics()
+find_date_ranges()
 {
 	case $# in
 		0)
 			# Show all topics.
-			r_start="0"
-			r_end="z"
+			echo 0 z
 			;;
 		1)
 			# Show topics of one year, month or day.
-			r_start=$(date_complete $1)
-			r_end=$(date_complete_next $1)
+			date_complete $1
+			date_complete_next $1
 			;;
 		2)
 			# Show all topics in a given range.
-			r_start=$(date_complete $1)
-			r_end=$(date_complete_next $2)
-			;;
-		*)
-			return 1
+			date_complete $1
+			date_complete_next $2
 			;;
 	esac
+}
+
+alltopics()
+{
+	read r_start r_end < <(find_date_ranges)
 
 	# Search matching filenames and print their topics.
 	for i in "$datadir"/*gitary
@@ -161,6 +162,26 @@ topics()
 			# Extract all topic lines from that file.
 			echo "$day"
 			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
+		fi
+	done | $pager
+}
+
+alltags()
+{
+	read r_start r_end < <(find_date_ranges)
+
+	# Search matching filenames and grab their tags.
+	for i in "$datadir"/*gitary
+	do
+		day=$(basename "$i")
+		day=${day%%.*}
+		if [[ $day > $r_start ]] ||
+			[[ $day == $r_start ]] &&
+			[[ $day < $r_end ]]
+		then
+			# Extract all tag lines from that file.
+			echo "$day"
+			sed -n 's/^tags: /\t/p' "$i"
 		fi
 	done | $pager
 }
