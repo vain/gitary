@@ -186,6 +186,28 @@ alltags()
 	done | $pager
 }
 
+tagcloud()
+{
+	read r_start r_end < <(find_date_ranges)
+
+	# Search matching filenames and grab their tags.
+	declare -A tagcounts
+	for i in "$datadir"/*gitary
+	do
+		day=$(basename "$i")
+		day=${day%%.*}
+		if [[ $day > $r_start ]] ||
+			[[ $day == $r_start ]] &&
+			[[ $day < $r_end ]]
+		then
+			# Extract all tag lines from that file, replace spaces
+			# between tags into newlines. sort and uniq will do the
+			# counting (at the end of this loop).
+			sed -n 's/^tags: //p' "$i" | tr ' ' '\n'
+		fi
+	done | sort | uniq -c | sort -k1rn | $pager
+}
+
 checkdatadir()
 {
 	if [[ ! -d "$datadir" ]]

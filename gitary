@@ -76,6 +76,12 @@ case "${opt#-}" in
 		shift
 		alltags "$@"
 		;;
+	tagcloud)
+		# Count tags. Similar to --alltopics, a time range may be
+		# given.
+		shift
+		tagcloud "$@"
+		;;
 	addblobs)
 		# Add all files as blobs for the current day.
 		shift
