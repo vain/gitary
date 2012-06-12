@@ -13,19 +13,20 @@ search()
 {
 	# Only search in tags or the whole entry? Only refs?
 	case "$1" in
-		-a)
-			shift
-			prefix=""
-			msgprefix="everything"
-			;;
 		-r)
 			shift
 			prefix="\n(-- |\[[[:digit:]]+\])[^\n]*"
 			msgprefix="references"
 			;;
-		*)
+		-t)
+			shift
 			prefix="\ntags:[^\n]*"
 			msgprefix="tags"
+			;;
+		*)
+			prefix=""
+			msgprefix="everything"
+			;;
 	esac
 
 	search="$@"

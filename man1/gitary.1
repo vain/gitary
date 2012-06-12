@@ -16,19 +16,18 @@ you to store pictures or programs as well.
 All of these options are optional and mutual exclusive. Note that they
 can start with one, two or no dashes.
 .TP
+\fB\-\-search\fP \fIword ...\fP
+Search entire entries and print items that include one of the words or a
+part of them.
+.TP
 \fB\-\-tags\fP \fIword ...\fP
-Search for tags. Prints out each entry if its tagline includes one of
-the given words or a part of such a word.
+Same as \fB\-\-search\fP, but only search in taglines.
 .TP
 \fB\-\-refs\fP \fIword ...\fP
 Search in references. Prints out each entry if it contains a reference
 like \fI\(lq\-\- Einstein\(rq\fP or \fI\(lq[1] www.archlinux.org\(rq\fP.
 That is, references start with two dashes and one blank at the beginning
 of a line \(em but you can also use a number in square brackets instead.
-.TP
-\fB\-\-search\fP \fIword ...\fP
-Search entire entries. Same as \fB\-\-tags\fP but searching is not
-limited to taglines or references.
 .TP
 .PD 0
 \fB\-\-edit\fP \fIday\fP

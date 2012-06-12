@@ -37,7 +37,7 @@ case "${opt#-}" in
 	tags)
 		# Only search for tags.
 		shift
-		search "$@"
+		search -t "$@"
 		;;
 	refs)
 		# Only search for references.
@@ -47,7 +47,7 @@ case "${opt#-}" in
 	search)
 		# Search whole entries.
 		shift
-		search -a "$@"
+		search "$@"
 		;;
 	gitk)
 		(
