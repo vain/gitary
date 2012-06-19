@@ -62,7 +62,11 @@ edit()
 {
 	for i
 	do
-		$editor "$datadir/$i.gitary"
+		when=$(date -d "$i" +%F)
+		if (( $? == 0 ))
+		then
+			$editor "$datadir/$when.gitary"
+		fi
 	done
 
 	commit
