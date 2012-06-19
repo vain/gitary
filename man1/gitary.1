@@ -166,6 +166,18 @@ it, you can also add the language of code areas:
 Currently, there's support for \fBbash\fP, \fBpython\fP, \fBruby\fP,
 \fBjava\fP, \fBc\fP, \fBlua\fP, \fBvim\fP, \fBassembly\fP and
 \fBdiff\fP.
+.SH DEPENDENCIES
+In order to run \fBgitary\fP, the following tools must be installed:
+.IP \(bu 4
+GNU bash,
+.IP \(bu 4
+GNU awk,
+.IP \(bu 4
+GNU sed,
+.IP \(bu 4
+git.
+.P
+Ideally, you should have to most recent versions installed.
 .SH FILES
 .TP
 .PD 0
@@ -175,3 +187,19 @@ Currently, there's support for \fBbash\fP, \fBpython\fP, \fBruby\fP,
 \fI$HOME/.local/share/gitary/\fP
 Default per-user data directory if \fB$GITARY_DATA\fP is not set. The
 \fB$HOME\fP variant is only used if \fB$XDG_DATA_HOME\fP is not set.
+.SH BUGS
+Currently, no bugs are known. If you find one, we invite you to report
+it at the GitHub Issue tracker (http://github.com/vain/gitary/issues).
+.SH LICENSE
+\fBgitary\fP is released as \(lqPIZZA-WARE\(rq. See the accompanying
+\fILICENSE\fP file.
+.SH HISTORY
+\fBgitary\fP was originally written by Peter Hofmann. The project was
+started in August 2009.
+.SH "SEE ALSO"
+.BR git (1),
+.BR gitk (1),
+.BR awk (1),
+.BR sed (1),
+.BR bash (1),
+.BR vim (1).
