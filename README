@@ -21,27 +21,32 @@ OPTIONS
        All  of  these  options are optional and mutual exclusive. Note
        that they can start with one, two or no dashes.
 
-       --search word ...
+       --search word [word ...]
               Search entire entries and print items that  include  one
               of the words or a part of them.
 
-       --tags word ...
+       --tags word [word ...]
               Same as --search, but only search in taglines.
 
-       --refs word ...
+       --refs word [word ...]
               Search  in  references. Prints out each entry if it con‐
               tains a reference like “-- Einstein” or  “[1]  www.arch‐
               linux.org”.   That  is, references start with two dashes
               and one blank at the beginning of a line — but  you  can
               also use a number in square brackets instead.
 
-       --edit day
-       --view day
-              Edit  the given day. Expects the format YYYY-MM-DD, i.e.
-              2009-09-31.
+       --edit day [day ...]
+       --view day [day ...]
+              Edit the given day. day can be any string that is under‐
+              stood by date(1), e.g. “2009-09-31”, “yesterday”  or  “a
+              week  ago”.  (Don't  forget  quoting when working at the
+              shell.)
+
+              If you specify multiple days, they are edited one  after
+              another.
 
               --view is an alias for --edit. That's because if there's
-              a  --viewall  (see  below),  then there must be a simple
+              a --viewall (see below), then there  must  be  a  simple
               --view, too.
 
               Note that you can't view an entry in read-only mode.
@@ -49,36 +54,36 @@ OPTIONS
        --gitk Launch gitk(1) in the data directory.
 
        --viewall
-              Show all entries in chronological order in  the  program
+              Show  all  entries in chronological order in the program
               specified in your $PAGER environment variable.
 
        --alltopics [date [date]]
-              Only  show  topics.  date can be one of YYYY, YYYY-MM or
-              YYYY-MM-DD. If only one date is given, show  all  topics
-              of  this  date. That is, “--alltopics 2009-11” shows all
-              topics  of  November  2009.  Accordingly,   “--alltopics
-              2010-02-03”  shows  all  topics  of  the 3rd of February
+              Only show topics. date can be one of  YYYY,  YYYY-MM  or
+              YYYY-MM-DD.  If  only one date is given, show all topics
+              of this date. That is, “--alltopics 2009-11”  shows  all
+              topics   of  November  2009.  Accordingly,  “--alltopics
+              2010-02-03” shows all topics  of  the  3rd  of  February
               2010.
 
-              If two dates are given, then  show  all  topics  written
-              during   that   period  of  time.  “--alltopics  2009-11
-              2010-03-12” will show all topics from the 1st of  Novem‐
+              If  two  dates  are  given, then show all topics written
+              during  that  period  of  time.   “--alltopics   2009-11
+              2010-03-12”  will show all topics from the 1st of Novem‐
               ber 2009 until the 12th of March 2010 (inclusively).
 
        --alltags [date [date]]
-              For  each  day, show all tags. See --alltopics on how to
+              For each day, show all tags. See --alltopics on  how  to
               specify date ranges.
 
        --tagcloud [date [date]]
               Collect all tags and count them. This allows you to gen‐
-              erate  a tag cloud with the use of other external tools.
+              erate a tag cloud with the use of other external  tools.
               See --alltopics on how to specify date ranges.
 
        --addblobs [-t tag] file [file ...]
-              Add all files to today's blobs.  That  is,  a  directory
-              called  “blobs”  will be created in your data directory.
-              Below this, a subdirectory for each day will be  created
-              (like  “blobs/2012-06-07/”). gitary will never overwrite
+              Add  all  files  to  today's blobs. That is, a directory
+              called “blobs” will be created in your  data  directory.
+              Below  this, a subdirectory for each day will be created
+              (like “blobs/2012-06-07/”). gitary will never  overwrite
               existing files.
 
               Using -t you can specify a “tag” for your blobs.  Essen‐
@@ -86,11 +91,11 @@ OPTIONS
               today's      blobs      (like      -t      code      for
               “blobs/2012-06-07/code/).
 
-              Note:  Unlike  other options, you can't omit the leading
+              Note: Unlike other options, you can't omit  the  leading
               dash in -t.
 
        --printblobdir
-              Prints the absolute path to your blob directory on  std‐
+              Prints  the absolute path to your blob directory on std‐
               out. This can be used to create a shell alias like this:
 
 
@@ -99,15 +104,15 @@ OPTIONS
 
 CONFIGURATION
        All your entries are stored in the data directory. A git repos‐
-       itory   will   reside   in   this   directory.   By    default,
+       itory    will   reside   in   this   directory.   By   default,
        $XDG_DATA_HOME/gitary will be used or $HOME/.local/share/gitary
        if $XDG_DATA_HOME is not set.
 
-       Use the environment variable $GITARY_DATA to  change  this.  If
+       Use  the  environment  variable $GITARY_DATA to change this. If
        it's set, then this directory is used.
 
        You have to do a git init in the data repository before you can
-       use this script. However, if the directory does not exist,  the
+       use  this script. However, if the directory does not exist, the
        script will ask you what to do.
 
        gitary uses whichever $EDITOR and $PAGER you configured in your
@@ -136,15 +141,15 @@ SYNTAX
             -- http://en.wikiquote.org/wiki/Monty_Python%27s_Flying_Circus
 
 
-       The head line is mandatory as is the “tags”  line.  The  search
+       The  head  line  is mandatory as is the “tags” line. The search
        routines use the head line to split up entries. Also, there's a
        special search function that can search in the “tags” line only
-       (using  --tags).  All  other content can be free form. However,
-       there's a special search function for “references”, too  (using
+       (using --tags). All other content can be  free  form.  However,
+       there's  a special search function for “references”, too (using
        --refs).
 
-       There's  a  syntax  highlighting  scheme for vim(1) ready to be
-       used in the .vim/ subdirectory. Thus, you should get  the  best
+       There's a syntax highlighting scheme for  vim(1)  ready  to  be
+       used  in  the .vim/ subdirectory. Thus, you should get the best
        experience when using this script together with vim. If you use
        it, you can also add the language of code areas:
 
@@ -163,7 +168,7 @@ SYNTAX
             ---8<---
 
 
-       Currently, there's support for bash,  python,  ruby,  java,  c,
+       Currently,  there's  support  for  bash, python, ruby, java, c,
        lua, vim, assembly and diff.
 
 DEPENDENCIES
@@ -182,13 +187,13 @@ DEPENDENCIES
 FILES
        $XDG_DATA_HOME/gitary/
        $HOME/.local/share/gitary/
-              Default  per-user  data directory if $GITARY_DATA is not
+              Default per-user data directory if $GITARY_DATA  is  not
               set. The $HOME variant is only used if $XDG_DATA_HOME is
               not set.
 
 BUGS
        Currently, no bugs are known. If you find one, we invite you to
-       report     it     at     the     GitHub      Issue      tracker
+       report      it      at     the     GitHub     Issue     tracker
        (http://github.com/vain/gitary/issues).
 
 LICENSE

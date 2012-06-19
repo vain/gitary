@@ -16,26 +16,29 @@ you to store pictures or programs as well.
 All of these options are optional and mutual exclusive. Note that they
 can start with one, two or no dashes.
 .TP
-\fB\-\-search\fP \fIword ...\fP
+\fB\-\-search\fP \fIword\fP [\fIword ...\fP]
 Search entire entries and print items that include one of the words or a
 part of them.
 .TP
-\fB\-\-tags\fP \fIword ...\fP
+\fB\-\-tags\fP \fIword\fP [\fIword ...\fP]
 Same as \fB\-\-search\fP, but only search in taglines.
 .TP
-\fB\-\-refs\fP \fIword ...\fP
+\fB\-\-refs\fP \fIword\fP [\fIword ...\fP]
 Search in references. Prints out each entry if it contains a reference
 like \fI\(lq\-\- Einstein\(rq\fP or \fI\(lq[1] www.archlinux.org\(rq\fP.
 That is, references start with two dashes and one blank at the beginning
 of a line \(em but you can also use a number in square brackets instead.
 .TP
 .PD 0
-\fB\-\-edit\fP \fIday\fP
+\fB\-\-edit\fP \fIday\fP [\fIday ...\fP]
 .TP
 .PD
-\fB\-\-view\fP \fIday\fP
-Edit the given day. Expects the format \fIYYYY\-MM\-DD\fP, i.e.
-\fI2009\-09\-31\fP.
+\fB\-\-view\fP \fIday\fP [\fIday ...\fP]
+Edit the given day. \fIday\fP can be any string that is understood by
+\fBdate\fP(1), e.g. \(lq2009-09-31\(rq, \(lqyesterday\(rq or \(lqa week
+ago\(rq. (Don't forget quoting when working at the shell.)
+
+If you specify multiple days, they are edited one after another.
 
 \fB\-\-view\fP is an alias for \fB\-\-edit\fP. That's because if there's
 a \fB\-\-viewall\fP (see below), then there must be a simple
