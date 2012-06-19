@@ -14,8 +14,9 @@ pager=${PAGER:-less}
 
 # Check if the user only wants to view the help page. If so, display it
 # and exit. This does not check whether the data dir exists.
-case "$1" in
-	help|-h|-help|--help)
+opt=${1#-}
+case "${opt#-}" in
+	help|h)
 		man -M "$basedir" gitary
 		exit 1
 		;;
@@ -32,7 +33,6 @@ then
 fi
 
 # Remove up to two leading dashes from $1.
-opt=${1#-}
 case "${opt#-}" in
 	tags)
 		# Only search for tags.
