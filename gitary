@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# Get the real basedir by resolving any links.
-basedir=$(dirname "$(readlink -e "$0")")
-
-# Include further functions.
-source "$basedir/gitary-functions" || exit 1
+# Include further functions. Try the base directory of this script
+# first; this allows to develop gitary inside the git repository. If
+# that fails (i.e., if gitary is located in /usr/bin), then try
+# /usr/lib.
+base=$(dirname "$(readlink -e "$0")")
+[[ -r "$base/gitary-functions" ]] && lib=$base || lib=/usr/lib/gitary
+. "$lib"/gitary-functions || exit 1
 
 # Use default settings as fallback.
 default_prefix=${XDG_DATA_HOME:-$HOME/.local/share}
@@ -12,12 +14,17 @@ datadir=${GITARY_DATA:-$default_prefix/gitary}
 editor=${EDITOR:-vim}
 pager=${PAGER:-less}
 
-# Check if the user only wants to view the help page. If so, display it
-# and exit. This does not check whether the data dir exists.
+# Check if the user only wants to view the help page. We have none.
+# Refer to the man page.
 opt=${1#-}
 case "${opt#-}" in
 	help|h)
-		man -M "$basedir" gitary
+		cat >&2 <<-EOF
+		gitary is a diary using git as its backend.
+
+		There is no summary page. If you need help, please have a look
+		at the manual page (e.g., run "man gitary").
+		EOF
 		exit 1
 		;;
 esac
