@@ -36,6 +36,8 @@ search()
 	search='('${search//[[:space:]]/|}')'
 
 	# gawk will do all the magic.
+	col_hit=$(tput bold; tput setaf 1)
+	col_reset=$(tput sgr0)
 	gawk '
 		BEGIN {
 			IGNORECASE=1
@@ -48,6 +50,7 @@ search()
 			gsub(/\.gitary/, "", entrydate)
 			gsub(/^.*\//, "", entrydate)
 			gsub(/\n+$/, "", $0)
+			gsub(/'"$search"'/, "'"$col_hit"'&'"$col_reset"'", $0)
 			cmd="date -d \"" entrydate "\" \"+%a, %F\""
 			cmd | getline fmt
 			close(cmd)
