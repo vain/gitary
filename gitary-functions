@@ -52,7 +52,7 @@ search()
 			close(cmd)
 			gsub(/\n+$/, "", fmt)
 			print "#############################################"
-			print "             DAY: " fmt
+			print "               " fmt
 			print "#############################################"
 			print "\n"
 			print "=== " $0 "\n\n\n\n"
@@ -84,7 +84,7 @@ viewall()
 			bname=${bname%%.*}
 			fmt=$(date -d "$bname" +"%a, %F")
 			echo "#############################################"
-			echo "             DAY: $fmt"
+			echo "               $fmt"
 			echo "#############################################"
 			echo
 			echo
