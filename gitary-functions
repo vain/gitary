@@ -36,30 +36,27 @@ search()
 	search='('${search//[[:space:]]/|}')'
 
 	# gawk will do all the magic.
-	gawk '                                                              \
-		BEGIN                                                           \
-		{                                                               \
-			RS="=== ";                                                  \
-			print "Searching '"${msgprefix}"' for: '"${search}"'\n\n";  \
-		};                                                              \
-		                                                                \
-		/'"${prefix}${search}"'/                                        \
-		{                                                               \
-			entrydate=FILENAME;                                         \
-			gsub(/\.gitary/, "", entrydate);                            \
-			gsub(/^.*\//, "", entrydate);                               \
-			gsub(/\n+$/, "", $0);                                       \
-			cmd="date -d \"" entrydate "\" \"+%a, %F\"";                \
-			cmd | getline fmt;                                          \
-			close(cmd);                                                 \
-			gsub(/\n+$/, "", fmt);                                      \
-			print "#############################################";      \
-			print "             DAY: " fmt;                             \
-			print "#############################################";      \
-			print "\n";                                                 \
-			print "=== " $0 "\n\n\n\n";                                 \
-		}'                                                              \
-		"$datadir"/*gitary | $pager
+	gawk '
+		BEGIN {
+			RS="=== "
+			print "Searching '"${msgprefix}"' for: '"${search}"'\n\n"
+		}
+
+		/'"${prefix}${search}"'/ {
+			entrydate=FILENAME
+			gsub(/\.gitary/, "", entrydate)
+			gsub(/^.*\//, "", entrydate)
+			gsub(/\n+$/, "", $0)
+			cmd="date -d \"" entrydate "\" \"+%a, %F\""
+			cmd | getline fmt
+			close(cmd)
+			gsub(/\n+$/, "", fmt)
+			print "#############################################"
+			print "             DAY: " fmt
+			print "#############################################"
+			print "\n"
+			print "=== " $0 "\n\n\n\n"
+		}' "$datadir"/*gitary | $pager
 }
 
 edit()
@@ -167,8 +164,8 @@ alltopics()
 		day=$(basename "$i")
 		day=${day%%.*}
 		if [[ $day > ${range[0]} ]] ||
-			[[ $day == ${range[0]} ]] &&
-			[[ $day < ${range[1]} ]]
+		   [[ $day == ${range[0]} ]] &&
+		   [[ $day < ${range[1]} ]]
 		then
 			# Extract all topic lines from that file.
 			fmt=$(date -d "$day" "+%a, %F")
@@ -188,8 +185,8 @@ alltags()
 		day=$(basename "$i")
 		day=${day%%.*}
 		if [[ $day > ${range[0]} ]] ||
-			[[ $day == ${range[0]} ]] &&
-			[[ $day < ${range[1]} ]]
+		   [[ $day == ${range[0]} ]] &&
+		   [[ $day < ${range[1]} ]]
 		then
 			# Extract all tag lines from that file.
 			fmt=$(date -d "$day" "+%a, %F")
@@ -210,8 +207,8 @@ tagcloud()
 		day=$(basename "$i")
 		day=${day%%.*}
 		if [[ $day > ${range[0]} ]] ||
-			[[ $day == ${range[0]} ]] &&
-			[[ $day < ${range[1]} ]]
+		   [[ $day == ${range[0]} ]] &&
+		   [[ $day < ${range[1]} ]]
 		then
 			# Extract all tag lines from that file, replace spaces
 			# between tags into newlines. sort and uniq will do the
