@@ -180,6 +180,8 @@ DEPENDENCIES
 
        ·   GNU sed,
 
+       ·   tput(1) from ncurses,
+
        ·   git.
 
        Ideally, you should have to most recent versions installed.
