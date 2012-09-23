@@ -42,10 +42,10 @@ search()
 		BEGIN {
 			IGNORECASE=1
 			RS="=== "
-			print "Searching '"${msgprefix}"' for: '"${search}"'\n\n"
+			print "Searching '"$msgprefix"' for: '"$search"'\n\n"
 		}
 
-		/'"${prefix}${search}"'/ {
+		/'"$prefix$search"'/ {
 			entrydate=FILENAME
 			gsub(/\.gitary/, "", entrydate)
 			gsub(/^.*\//, "", entrydate)
