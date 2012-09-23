@@ -112,6 +112,12 @@ will ask you what to do.
 .P
 \fBgitary\fP uses whichever \fB$EDITOR\fP and \fB$PAGER\fP you
 configured in your \fI~/.profile\fP.
+.SH "HIGHLIGHTING OF SEARCH RESULTS"
+\fBgitary\fP uses ANSI escape sequences to highlight search results. As
+a result, you \fImay\fP get garbled output if your pager is not
+configured to support this. For example, you may wish to run
+\fBless\fP(1) with the command line option \fB\-r\fP (see environment
+variable $\fBLESS\fP).
 .SH SYNTAX
 Each entry should follow the following format:
 .P

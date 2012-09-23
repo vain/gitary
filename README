@@ -118,6 +118,13 @@ CONFIGURATION
        gitary uses whichever $EDITOR and $PAGER you configured in your
        ~/.profile.
 
+HIGHLIGHTING OF SEARCH RESULTS
+       gitary  uses ANSI escape sequences to highlight search results.
+       As a result, you may get garbled output if your  pager  is  not
+       configured  to  support  this. For example, you may wish to run
+       less(1) with the command line option -r (see environment  vari‐
+       able $LESS).
+
 SYNTAX
        Each entry should follow the following format:
 
