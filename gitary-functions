@@ -38,6 +38,7 @@ search()
 	# gawk will do all the magic.
 	gawk '
 		BEGIN {
+			IGNORECASE=1
 			RS="=== "
 			print "Searching '"${msgprefix}"' for: '"${search}"'\n\n"
 		}
