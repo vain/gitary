@@ -36,8 +36,8 @@ search()
 	search='('${search//[[:space:]]/|}')'
 
 	# gawk will do all the magic.
-	col_hit=$(tput bold; tput setaf 1)
-	col_reset=$(tput sgr0)
+	col_hit=$'\e[1;31m'
+	col_reset=$'\e[0m'
 	gawk '
 		BEGIN {
 			IGNORECASE=1
