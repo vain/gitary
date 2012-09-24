@@ -109,29 +109,39 @@ OPTIONS
                    alias gblobs='cd -- "$(gitary --printblobdir)"'
 
 
+       You may have noticed that there is no option to  list  or  open
+       blobs.  This is intentional. You can easily use the shell to do
+       this. For example, to list all blobs tagged with “foobang”  you
+       could do:
+
+
+       $ gblobs
+       $ ls -al */foobang/*
+
+
 CONFIGURATION
        All your entries are stored in the data directory. A git repos‐
-       itory    will   reside   in   this   directory.   By   default,
+       itory   will   reside   in   this   directory.   By    default,
        $XDG_DATA_HOME/gitary will be used or $HOME/.local/share/gitary
-       if  $XDG_DATA_HOME  is  not  set.  Use the environment variable
-       $GITARY_DATA to change this.  If it's set, then this  directory
+       if $XDG_DATA_HOME is not  set.  Use  the  environment  variable
+       $GITARY_DATA  to change this.  If it's set, then this directory
        is used.
 
-       Important  note:  Your  data  directory  must exist and it must
-       already be initialized as a Git repository. gitary will not  do
+       Important note: Your data directory  must  exist  and  it  must
+       already  be initialized as a Git repository. gitary will not do
        this for you.
 
        gitary uses whichever $EDITOR and $PAGER you configured in your
        ~/.profile.
 
 HIGHLIGHTING OF SEARCH RESULTS
-       gitary uses ANSI escape sequences to highlight search  results.
-       As  a  result,  you may get garbled output if your pager is not
-       configured to support this. For example, you may  wish  to  run
-       less(1)  with the command line option -R (see environment vari‐
+       gitary  uses ANSI escape sequences to highlight search results.
+       As a result, you may get garbled output if your  pager  is  not
+       configured  to  support  this. For example, you may wish to run
+       less(1) with the command line option -R (see environment  vari‐
        able $LESS).
 
-       You can turn off coloring by using  the  $GITARY_SUPPRESS_COLOR
+       You  can  turn off coloring by using the $GITARY_SUPPRESS_COLOR
        environment variable (see ENVIRONMENT).
 
 SYNTAX
@@ -157,15 +167,15 @@ SYNTAX
             -- http://en.wikiquote.org/wiki/Monty_Python%27s_Flying_Circus
 
 
-       The  head  line  is mandatory as is the “tags” line. The search
+       The head line is mandatory as is the “tags”  line.  The  search
        routines use the head line to split up entries. Also, there's a
        special search function that can search in the “tags” line only
-       (using --tags). All other content can be  free  form.  However,
-       there's  a special search function for “references”, too (using
+       (using  --tags).  All  other content can be free form. However,
+       there's a special search function for “references”, too  (using
        --refs).
 
-       There's a syntax highlighting scheme for  vim(1)  ready  to  be
-       used  in  the .vim/ subdirectory. Thus, you should get the best
+       There's  a  syntax  highlighting  scheme for vim(1) ready to be
+       used in the .vim/ subdirectory. Thus, you should get  the  best
        experience when using this script together with vim. If you use
        it, you can also add the language of code areas:
 
@@ -184,7 +194,7 @@ SYNTAX
             ---8<---
 
 
-       Currently,  there's  support  for  bash, python, ruby, java, c,
+       Currently, there's support for bash,  python,  ruby,  java,  c,
        lua, vim, assembly and diff.
 
 DEPENDENCIES
@@ -202,24 +212,24 @@ DEPENDENCIES
 
 ENVIRONMENT
        GITARY_DATA
-              If this variable is set, it must point  to  a  directory
-              where  your  git  repository will be stored. You can use
+              If  this  variable  is set, it must point to a directory
+              where your git repository will be stored.  You  can  use
               this to override the default location (see FILES below).
 
        GITARY_SUPPRESS_COLOR
-              If this variable is  set  to  an  arbitray  value,  then
+              If  this  variable  is  set  to  an arbitray value, then
               gitary won't ever print any ANSI colors.
 
 FILES
        $XDG_DATA_HOME/gitary/
        $HOME/.local/share/gitary/
-              Default  per-user  data directory if $GITARY_DATA is not
+              Default per-user data directory if $GITARY_DATA  is  not
               set. The $HOME variant is only used if $XDG_DATA_HOME is
               not set.
 
 BUGS
        Currently, no bugs are known. If you find one, we invite you to
-       report     it     at     the     GitHub      Issue      tracker
+       report      it      at     the     GitHub     Issue     tracker
        (http://github.com/vain/gitary/issues).
 
 LICENSE

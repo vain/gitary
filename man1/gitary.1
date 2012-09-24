@@ -103,6 +103,17 @@ can be used to create a shell alias like this:
 	alias gblobs='cd -- "$(gitary --printblobdir)"'
 .fi
 \fP
+.P
+You may have noticed that there is no option to list or open blobs. This
+is intentional. You can easily use the shell to do this. For example, to
+list all blobs tagged with \(lqfoobang\(rq you could do:
+.P
+\f(CW
+.nf
+$ gblobs
+$ ls -al */foobang/*
+.fi
+\fP
 .SH CONFIGURATION
 All your entries are stored in the data directory. A git repository will
 reside in this directory. By default, \fI$XDG_DATA_HOME/gitary\fP will
