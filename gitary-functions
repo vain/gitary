@@ -224,21 +224,10 @@ tagcloud()
 
 checkdatadir()
 {
-	if [[ ! -d "$datadir" ]]
+	if [[ ! -d "$datadir"/.git ]]
 	then
-		echo "The data directory ($datadir) does not exist yet."
-		read -p "Would you like to create it now? [y/N] "
-
-		if [[ "$REPLY" == "Y" ]] || [[ "$REPLY" == "y" ]]
-		then
-			mkdir -p "$datadir" || return 1
-			(
-				cd "$datadir" || return 1
-				git init || return 1
-			) || return 1
-		else
-			return 1
-		fi
+		echo "\`$datadir' is not a Git repository." >&2
+		return 1
 	fi
 }
 

@@ -100,15 +100,13 @@ can be used to create a shell alias like this:
 .SH CONFIGURATION
 All your entries are stored in the data directory. A git repository will
 reside in this directory. By default, \fI$XDG_DATA_HOME/gitary\fP will
-be used or \fI$HOME/.local/share/gitary\fP if \fB$XDG_DATA_HOME\fP is
-not set.
+be used or \fI$HOME/.local/share/gitary\fP if $\fBXDG_DATA_HOME\fP is
+not set. Use the environment variable $\fBGITARY_DATA\fP to change this.
+If it's set, then this directory is used.
 .P
-Use the environment variable \fB$GITARY_DATA\fP to change this. If it's
-set, then this directory is used.
-.P
-You have to do a \fBgit init\fP in the data repository before you can
-use this script. However, if the directory does not exist, the script
-will ask you what to do.
+\fBImportant note:\fP Your data directory must exist and it must
+already be initialized as a Git repository. \fBgitary\fP will not do
+this for you.
 .P
 \fBgitary\fP uses whichever \fB$EDITOR\fP and \fB$PAGER\fP you
 configured in your \fI~/.profile\fP.
@@ -189,6 +187,12 @@ GNU sed,
 git.
 .P
 Ideally, you should have to most recent versions installed.
+.SH ENVIRONMENT
+.TP
+.B GITARY_DATA
+If this variable is set, it must point to a directory where your git
+repository will be stored. You can use this to override the default
+location (see \fBFILES\fP below).
 .SH FILES
 .TP
 .PD 0
