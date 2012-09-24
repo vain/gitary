@@ -67,6 +67,12 @@ case "${opt#-}" in
 		shift
 		edit "$@"
 		;;
+	delete)
+		# Delete existing entries (including any blobs) from the working
+		# directory.
+		shift
+		delete "$@"
+		;;
 	viewall)
 		# Show all entries in chronological order.
 		viewall

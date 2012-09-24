@@ -51,6 +51,13 @@ OPTIONS
 
               Note that you can't view an entry in read-only mode.
 
+       --delete day [day ...]
+              Deletes  the given days from the working directory. This
+              includes any blobs. Of course,  the  deleted  data  will
+              still be accessible through Git.
+
+              day can be anything that --edit accepts.
+
        --gitk Launch gitk(1) in the data directory.
 
        --viewall

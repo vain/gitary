@@ -83,6 +83,21 @@ edit()
 	commit
 }
 
+delete()
+{
+	for i
+	do
+		when=$(date -d "$i" +%F)
+		if (( $? == 0 ))
+		then
+			rm -v "$datadir/$when.gitary"
+			rm -Rv "$datadir/blobs/$when"
+		fi
+	done
+
+	commit
+}
+
 viewall()
 {
 	(

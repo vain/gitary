@@ -46,6 +46,12 @@ a \fB\-\-viewall\fP (see below), then there must be a simple
 
 Note that you can't view an entry in read-only mode.
 .TP
+\fB\-\-delete\fP \fIday\fP [\fIday ...\fP]
+Deletes the given days from the working directory. This includes any
+blobs. Of course, the deleted data will still be accessible through Git.
+
+\fIday\fP can be anything that \fB\-\-edit\fP accepts.
+.TP
 \fB\-\-gitk\fP
 Launch \fBgitk\fP(1) in the data directory.
 .TP
