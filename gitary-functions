@@ -36,8 +36,14 @@ search()
 	search='('${search//[[:space:]]/|}')'
 
 	# gawk will do all the magic.
-	col_hit=$'\e[1;31m'
-	col_reset=$'\e[0m'
+	if [[ -z "$GITARY_SUPPRESS_COLOR" ]]
+	then
+		col_hit=$'\e[1;31m'
+		col_reset=$'\e[0m'
+	else
+		col_hit=
+		col_reset=
+	fi
 	gawk '
 		BEGIN {
 			IGNORECASE=1

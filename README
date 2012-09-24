@@ -124,6 +124,9 @@ HIGHLIGHTING OF SEARCH RESULTS
        less(1)  with the command line option -R (see environment vari‐
        able $LESS).
 
+       You can turn off coloring by using  the  $GITARY_SUPPRESS_COLOR
+       environment variable (see ENVIRONMENT).
+
 SYNTAX
        Each entry should follow the following format:
 
@@ -147,15 +150,15 @@ SYNTAX
             -- http://en.wikiquote.org/wiki/Monty_Python%27s_Flying_Circus
 
 
-       The head line is mandatory as is the “tags”  line.  The  search
+       The  head  line  is mandatory as is the “tags” line. The search
        routines use the head line to split up entries. Also, there's a
        special search function that can search in the “tags” line only
-       (using  --tags).  All  other content can be free form. However,
-       there's a special search function for “references”, too  (using
+       (using --tags). All other content can be  free  form.  However,
+       there's  a special search function for “references”, too (using
        --refs).
 
-       There's  a  syntax  highlighting  scheme for vim(1) ready to be
-       used in the .vim/ subdirectory. Thus, you should get  the  best
+       There's a syntax highlighting scheme for  vim(1)  ready  to  be
+       used  in  the .vim/ subdirectory. Thus, you should get the best
        experience when using this script together with vim. If you use
        it, you can also add the language of code areas:
 
@@ -174,7 +177,7 @@ SYNTAX
             ---8<---
 
 
-       Currently, there's support for bash,  python,  ruby,  java,  c,
+       Currently,  there's  support  for  bash, python, ruby, java, c,
        lua, vim, assembly and diff.
 
 DEPENDENCIES
@@ -192,9 +195,13 @@ DEPENDENCIES
 
 ENVIRONMENT
        GITARY_DATA
-              If  this  variable  is set, it must point to a directory
-              where your git repository will be stored.  You  can  use
+              If this variable is set, it must point  to  a  directory
+              where  your  git  repository will be stored. You can use
               this to override the default location (see FILES below).
+
+       GITARY_SUPPRESS_COLOR
+              If this variable is  set  to  an  arbitray  value,  then
+              gitary won't ever print any ANSI colors.
 
 FILES
        $XDG_DATA_HOME/gitary/

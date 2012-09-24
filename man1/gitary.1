@@ -116,6 +116,9 @@ a result, you \fImay\fP get garbled output if your pager is not
 configured to support this. For example, you may wish to run
 \fBless\fP(1) with the command line option \fB\-R\fP (see environment
 variable $\fBLESS\fP).
+.P
+You can turn off coloring by using the $\fBGITARY_SUPPRESS_COLOR\fP
+environment variable (see \fBENVIRONMENT\fP).
 .SH SYNTAX
 Each entry should follow the following format:
 .P
@@ -191,6 +194,10 @@ Ideally, you should have to most recent versions installed.
 If this variable is set, it must point to a directory where your git
 repository will be stored. You can use this to override the default
 location (see \fBFILES\fP below).
+.TP
+.B GITARY_SUPPRESS_COLOR
+If this variable is set to an arbitray value, then \fBgitary\fP won't
+ever print any ANSI colors.
 .SH FILES
 .TP
 .PD 0
