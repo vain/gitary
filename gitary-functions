@@ -286,5 +286,3 @@ printblobdir()
 {
 	readlink -e "$datadir/blobs"
 }
-
-# vim: set ts=4 sw=4 :
