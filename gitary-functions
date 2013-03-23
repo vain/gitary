@@ -5,7 +5,7 @@ commit()
 	(
 		cd "$datadir"
 		git add .
-		git commit -a -m "Auto-Commit $(date +'%F, %T')."
+		git commit -a -m "Auto-Commit $(date +'%F, %T')"
 	)
 }
 
