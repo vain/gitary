@@ -1,12 +1,295 @@
 #!/bin/bash
 
-# Include further functions. Try the base directory of this script
-# first; this allows to develop gitary inside the git repository. If
-# that fails (i.e., if gitary is located in /usr/bin), then try
-# /usr/lib.
-base=$(dirname "$(readlink -e "$0")")
-[[ -r "$base/gitary-functions" ]] && lib=$base || lib=/usr/lib/gitary
-. "$lib"/gitary-functions || exit 1
+# --- Function library
+commit()
+{
+	(
+		cd "$datadir"
+		git add .
+		git commit -a -m "Auto-Commit $(date +'%F, %T')"
+	)
+}
+
+search()
+{
+	# Only search in tags or the whole entry? Only refs?
+	case "$1" in
+		-r)
+			shift
+			prefix="\n(-- |\[[[:digit:]]+\])[^\n]*"
+			msgprefix="references"
+			;;
+		-t)
+			shift
+			prefix="\ntags:[^\n]*"
+			msgprefix="tags"
+			;;
+		*)
+			prefix=""
+			msgprefix="everything"
+			;;
+	esac
+
+	search="$@"
+
+	# "Explode" the list of tags. This'll result in a list of
+	# alternative search terms (boolean OR).
+	search='('${search//[[:space:]]/|}')'
+
+	# gawk will do all the magic.
+	if [[ -z "$GITARY_SUPPRESS_COLOR" ]]
+	then
+		col_hit=$'\e[1;31m'
+		col_reset=$'\e[0m'
+	else
+		col_hit=
+		col_reset=
+	fi
+	gawk '
+		BEGIN {
+			IGNORECASE=1
+			RS="=== "
+			print "Searching '"$msgprefix"' for: '"$search"'\n\n"
+		}
+
+		/'"$prefix$search"'/ {
+			entrydate=FILENAME
+			gsub(/\.gitary/, "", entrydate)
+			gsub(/^.*\//, "", entrydate)
+			gsub(/\n+$/, "", $0)
+			gsub(/'"$search"'/, "'"$col_hit"'&'"$col_reset"'", $0)
+			cmd="date -d \"" entrydate "\" \"+%a, %F\""
+			cmd | getline fmt
+			close(cmd)
+			gsub(/\n+$/, "", fmt)
+			print "#############################################"
+			print "               " fmt
+			print "#############################################"
+			print "\n"
+			print "=== " $0 "\n\n\n\n"
+		}' "$datadir"/*gitary | $pager
+}
+
+edit()
+{
+	for i
+	do
+		when=$(date -d "$i" +%F)
+		if (( $? == 0 ))
+		then
+			$editor "$datadir/$when.gitary"
+		fi
+	done
+
+	commit
+}
+
+delete()
+{
+	for i
+	do
+		when=$(date -d "$i" +%F)
+		if (( $? == 0 ))
+		then
+			rm -v "$datadir/$when.gitary"
+			rm -Rv "$datadir/blobs/$when"
+		fi
+	done
+
+	commit
+}
+
+viewall()
+{
+	(
+		echo
+		echo
+		for i in "$datadir"/*gitary
+		do
+			bname=$(basename "$i")
+			bname=${bname%%.*}
+			fmt=$(date -d "$bname" +"%a, %F")
+			echo "#############################################"
+			echo "               $fmt"
+			echo "#############################################"
+			echo
+			echo
+			cat "$i"
+			echo
+			echo
+			echo
+			echo
+		done
+	) | $pager
+}
+
+date_complete()
+{
+	# Given an incomplete date like "2010" or "2010-01", add the missing
+	# part such that it points to the beginning of that time span. For
+	# example, extend "2010" with "-01-01" meaning the very first moment
+	# of the year 2010.
+
+	OIFS=$IFS
+	IFS='-'
+	set -- $1
+	IFS=$OIFS
+
+	case $# in
+		1) echo $1-01-01 ;;
+		2) echo $1-$2-01 ;;
+		3) echo $1-$2-$3 ;;
+	esac
+}
+
+date_complete_next()
+{
+	# Like date_complete, but add one "entity". That is, "2010" will
+	# become "2011" and "2010-04-12" will become "2010-04-13".
+
+	OIFS=$IFS
+	IFS='-'
+	set -- $1
+	IFS=$OIFS
+
+	case $# in
+		1) echo $(($1 + 1))-01-01                   ;;
+		2) echo $(date -d "$1-$2-01 + 1 month" +%F) ;;
+		3) echo $(date -d "$1-$2-$3 + 1 day" +%F)   ;;
+	esac
+}
+
+find_date_ranges()
+{
+	case $# in
+		0)
+			# Show all topics.
+			echo 0
+			echo z
+			;;
+		1)
+			# Show topics of one year, month or day.
+			date_complete $1
+			date_complete_next $1
+			;;
+		2)
+			# Show all topics in a given range.
+			date_complete $1
+			date_complete_next $2
+			;;
+	esac
+}
+
+alltopics()
+{
+	range=($(find_date_ranges "$@"))
+
+	# Search matching filenames and print their topics.
+	for i in "$datadir"/*gitary
+	do
+		day=$(basename "$i")
+		day=${day%%.*}
+		if [[ $day > ${range[0]} ]] ||
+		   [[ $day == ${range[0]} ]] &&
+		   [[ $day < ${range[1]} ]]
+		then
+			# Extract all topic lines from that file.
+			fmt=$(date -d "$day" "+%a, %F")
+			echo "$fmt"
+			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
+		fi
+	done | $pager
+}
+
+alltags()
+{
+	range=($(find_date_ranges "$@"))
+
+	# Search matching filenames and grab their tags.
+	for i in "$datadir"/*gitary
+	do
+		day=$(basename "$i")
+		day=${day%%.*}
+		if [[ $day > ${range[0]} ]] ||
+		   [[ $day == ${range[0]} ]] &&
+		   [[ $day < ${range[1]} ]]
+		then
+			# Extract all tag lines from that file.
+			fmt=$(date -d "$day" "+%a, %F")
+			echo "$fmt"
+			sed -n 's/^tags: /\t/p' "$i"
+		fi
+	done | $pager
+}
+
+tagcloud()
+{
+	range=($(find_date_ranges "$@"))
+
+	# Search matching filenames and grab their tags.
+	declare -A tagcounts
+	for i in "$datadir"/*gitary
+	do
+		day=$(basename "$i")
+		day=${day%%.*}
+		if [[ $day > ${range[0]} ]] ||
+		   [[ $day == ${range[0]} ]] &&
+		   [[ $day < ${range[1]} ]]
+		then
+			# Extract all tag lines from that file, replace spaces
+			# between tags into newlines. sort and uniq will do the
+			# counting (at the end of this loop).
+			sed -n 's/^tags: //p' "$i" | tr ' ' '\n'
+		fi
+	done | sort | uniq -c | sort -k1rn | $pager
+}
+
+checkdatadir()
+{
+	if [[ ! -d "$datadir"/.git ]]
+	then
+		echo "\`$datadir' is not a Git repository." >&2
+		return 1
+	fi
+}
+
+addblobs()
+{
+	# Set a tag for these blobs? Essentially, a tag is a subdirectory.
+	case "$1" in
+		-t)
+			tag="$2"
+			shift
+			shift
+			;;
+		*)
+			tag=
+			;;
+	esac
+
+	# Create a new subdirectory for today. %F is locale-independent.
+	subdir="$datadir/blobs/$(date +%F)/$tag"
+	mkdir -p "$subdir" || return 1
+
+	for i
+	do
+		# Never overwrite existing files. cp doesn't inform us about
+		# existing files, though, so show a warning.
+		fname="$subdir/$(basename "$i")"
+		[[ -e "$fname" ]] && echo "\`$i' already exists in today's blobs." >&2
+		cp -n "$i" "$fname"
+	done
+
+	commit
+}
+
+printblobdir()
+{
+	readlink -e "$datadir/blobs"
+}
+
+
+# --- Main starts here
 
 # Use default settings as fallback.
 default_prefix=${XDG_DATA_HOME:-$HOME/.local/share}
