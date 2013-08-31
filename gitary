@@ -34,7 +34,7 @@ search()
 
 	# "Explode" the list of tags. This'll result in a list of
 	# alternative search terms (boolean OR).
-	search='('${search//[[:space:]]/|}')'
+	search="(${search//[[:space:]]/|})"
 
 	# gawk will do all the magic.
 	if [[ -z "$GITARY_SUPPRESS_COLOR" ]]
@@ -136,9 +136,9 @@ date_complete()
 	IFS=$OIFS
 
 	case $# in
-		1) echo $1-01-01 ;;
-		2) echo $1-$2-01 ;;
-		3) echo $1-$2-$3 ;;
+		1) echo "$1-01-01" ;;
+		2) echo "$1-$2-01" ;;
+		3) echo "$1-$2-$3" ;;
 	esac
 }
 
@@ -153,9 +153,9 @@ date_complete_next()
 	IFS=$OIFS
 
 	case $# in
-		1) echo $(($1 + 1))-01-01                   ;;
-		2) echo $(date -d "$1-$2-01 + 1 month" +%F) ;;
-		3) echo $(date -d "$1-$2-$3 + 1 day" +%F)   ;;
+		1) echo "$(($1 + 1))-01-01"                   ;;
+		2) echo "$(date -d "$1-$2-01 + 1 month" +%F)" ;;
+		3) echo "$(date -d "$1-$2-$3 + 1 day" +%F)"   ;;
 	esac
 }
 
@@ -169,13 +169,13 @@ find_date_ranges()
 			;;
 		1)
 			# Show topics of one year, month or day.
-			date_complete $1
-			date_complete_next $1
+			date_complete "$1"
+			date_complete_next "$1"
 			;;
 		2)
 			# Show all topics in a given range.
-			date_complete $1
-			date_complete_next $2
+			date_complete "$1"
+			date_complete_next "$2"
 			;;
 	esac
 }
