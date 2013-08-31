@@ -29,22 +29,12 @@ like \fI\(lq\-\- Einstein\(rq\fP or \fI\(lq[1] www.archlinux.org\(rq\fP.
 That is, references start with two dashes and one blank at the beginning
 of a line \(em but you can also use a number in square brackets instead.
 .TP
-.PD 0
 \fB\-\-edit\fP \fIday\fP [\fIday ...\fP]
-.TP
-.PD
-\fB\-\-view\fP \fIday\fP [\fIday ...\fP]
 Edit the given day. \fIday\fP can be any string that is understood by
 \fBdate\fP(1), e.g. \(lq2009-09-31\(rq, \(lqyesterday\(rq or \(lqa week
 ago\(rq. (Don't forget quoting when working at the shell.)
 
 If you specify multiple days, they are edited one after another.
-
-\fB\-\-view\fP is an alias for \fB\-\-edit\fP. That's because if there's
-a \fB\-\-viewall\fP (see below), then there must be a simple
-\fB\-\-view\fP, too.
-
-Note that you can't view an entry in read-only mode.
 .TP
 \fB\-\-delete\fP \fIday\fP [\fIday ...\fP]
 Deletes the given days from the working directory. This includes any

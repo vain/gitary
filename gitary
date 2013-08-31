@@ -345,7 +345,7 @@ case "${opt#-}" in
 			gitk --all
 		)
 		;;
-	edit|view)
+	edit)
 		# Edit or create an arbitrary entry.
 		shift
 		edit "$@"

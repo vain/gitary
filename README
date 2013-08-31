@@ -36,7 +36,6 @@ OPTIONS
               also use a number in square brackets instead.
 
        --edit day [day ...]
-       --view day [day ...]
               Edit the given day. day can be any string that is under‐
               stood by date(1), e.g. “2009-09-31”, “yesterday”  or  “a
               week  ago”.  (Don't  forget  quoting when working at the
@@ -44,12 +43,6 @@ OPTIONS
 
               If you specify multiple days, they are edited one  after
               another.
-
-              --view is an alias for --edit. That's because if there's
-              a --viewall (see below), then there  must  be  a  simple
-              --view, too.
-
-              Note that you can't view an entry in read-only mode.
 
        --delete day [day ...]
               Deletes  the given days from the working directory. This
