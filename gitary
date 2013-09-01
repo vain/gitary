@@ -15,21 +15,19 @@ search()
 	# Only search in tags or the whole entry? Only refs?
 	case "$1" in
 		-r)
-			shift
 			prefix="\n(-- |\[[[:digit:]]+\])[^\n]*"
 			msgprefix="references"
 			;;
 		-t)
-			shift
 			prefix="\ntags:[^\n]*"
 			msgprefix="tags"
 			;;
-		*)
+		-a)
 			prefix=""
 			msgprefix="everything"
 			;;
 	esac
-
+	shift
 	search="$@"
 
 	# "Explode" the list of tags. This'll result in a list of
@@ -337,7 +335,7 @@ case "${opt#-}" in
 	search)
 		# Search whole entries.
 		shift
-		search "$@"
+		search -a "$@"
 		;;
 	gitk)
 		(
