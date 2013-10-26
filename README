@@ -190,6 +190,9 @@ SYNTAX
        Currently, there's support for bash,  python,  ruby,  java,  c,
        lua, vim, assembly and diff.
 
+       A  file  will  be deleted if it is completely empty or contains
+       only one empty line (UNIX or DOS line endings).
+
 DEPENDENCIES
        In order to run gitary, the following tools must be installed:
 
@@ -205,24 +208,24 @@ DEPENDENCIES
 
 ENVIRONMENT
        GITARY_DATA
-              If  this  variable  is set, it must point to a directory
-              where your git repository will be stored.  You  can  use
+              If this variable is set, it must point  to  a  directory
+              where  your  git  repository will be stored. You can use
               this to override the default location (see FILES below).
 
        GITARY_SUPPRESS_COLOR
-              If  this  variable  is  set  to  an arbitray value, then
+              If this variable is  set  to  an  arbitray  value,  then
               gitary won't ever print any ANSI colors.
 
 FILES
        $XDG_DATA_HOME/gitary/
        $HOME/.local/share/gitary/
-              Default per-user data directory if $GITARY_DATA  is  not
+              Default  per-user  data directory if $GITARY_DATA is not
               set. The $HOME variant is only used if $XDG_DATA_HOME is
               not set.
 
 BUGS
        Currently, no bugs are known. If you find one, we invite you to
-       report      it      at     the     GitHub     Issue     tracker
+       report     it     at     the     GitHub      Issue      tracker
        (http://github.com/vain/gitary/issues).
 
 LICENSE
@@ -238,4 +241,4 @@ SEE ALSO
 
 
 
-Git-Diary                   September 2012                   GITARY(1)
+Git-Diary                    October 2013                    GITARY(1)
