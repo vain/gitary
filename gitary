@@ -68,6 +68,13 @@ search()
 		}' "$datadir"/*gitary | $pager
 }
 
+clean_empty()
+{
+	# Remove files with a size of 0, 1 or 2 bytes.
+	find -L "$datadir" -maxdepth 1 -type f -size -3c \
+		-printf "Cleaning up empty file '%P'\n" -delete
+}
+
 edit()
 {
 	for i
@@ -79,6 +86,7 @@ edit()
 		fi
 	done
 
+	clean_empty
 	commit
 }
 
@@ -94,6 +102,7 @@ delete()
 		fi
 	done
 
+	clean_empty
 	commit
 }
 
