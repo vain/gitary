@@ -3,7 +3,7 @@ GITARY(1)                  A diary using Git                 GITARY(1)
 
 
 NAME
-       gitary - a diary using git(1) as a backend.
+       gitary - a diary using git(1) as a backend
 
 SYNOPSIS
        gitary [OPTION]...
