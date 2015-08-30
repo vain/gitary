@@ -1,244 +1,39 @@
-GITARY(1)                  A diary using Git                 GITARY(1)
+                                 ======
+                                 gitary
+                                 ======
 
 
+A diary using a Git repo as a backend, simple markup language.
 
-NAME
-       gitary - a diary using git(1) as a backend
 
-SYNOPSIS
-       gitary [OPTION]...
+Installation
+------------
 
-DESCRIPTION
-       Without  any  options,  gitary  starts your favourite editor to
-       edit the entry for the current day. When you leave the  editor,
-       anything you've changed in the data directory will be automati‐
-       cally committed into the git  repository.  That  means  that  —
-       while writing your entry — you can place arbitrary files in the
-       data directory. This allows you to store pictures  or  programs
-       as well.
+gitary is a Bash script and relies on the following external tools:
 
-OPTIONS
-       All  of  these  options are optional and mutual exclusive. Note
-       that they can start with one, two or no dashes.
+    - GNU awk
+    - GNU coreutils
+    - GNU sed
+    - Git
 
-       --search word [word ...]
-              Search entire entries and print items that  include  one
-              of the words or a part of them.
+If you're on Arch Linux, you can use the following AUR package:
 
-       --tags word [word ...]
-              Same as --search, but only search in taglines.
+    - https://aur.archlinux.org/packages/gitary-git/
 
-       --refs word [word ...]
-              Search  in  references. Prints out each entry if it con‐
-              tains a reference like “-- Einstein” or  “[1]  www.arch‐
-              linux.org”.   That  is, references start with two dashes
-              and one blank at the beginning of a line — but  you  can
-              also use a number in square brackets instead.
 
-       --edit day [day ...]
-              Edit the given day. day can be any string that is under‐
-              stood by date(1), e.g. “2009-09-31”, “yesterday”  or  “a
-              week  ago”.  (Don't  forget  quoting when working at the
-              shell.)
+Running
+-------
 
-              If you specify multiple days, they are edited one  after
-              another.
+If you're running gitary for the first time, you must initialize your
+data directory:
 
-       --delete day [day ...]
-              Deletes  the given days from the working directory. This
-              includes any blobs. Of course,  the  deleted  data  will
-              still be accessible through Git.
+    $ cd "$XDG_DATA_HOME"
+    $ mkdir gitary
+    $ cd gitary
+    $ git init
 
-              day can be anything that --edit accepts.
+You can then run the program from any directory:
 
-       --gitk Launch gitk(1) in the data directory.
+    $ gitary
 
-       --viewall
-              Show  all  entries in chronological order in the program
-              specified in your $PAGER environment variable.
-
-       --alltopics [date [date]]
-              Only show topics. date can be one of  YYYY,  YYYY-MM  or
-              YYYY-MM-DD.  If  only one date is given, show all topics
-              of this date. That is, “--alltopics 2009-11”  shows  all
-              topics   of  November  2009.  Accordingly,  “--alltopics
-              2010-02-03” shows all topics  of  the  3rd  of  February
-              2010.
-
-              If  two  dates  are  given, then show all topics written
-              during  that  period  of  time.   “--alltopics   2009-11
-              2010-03-12”  will show all topics from the 1st of Novem‐
-              ber 2009 until the 12th of March 2010 (inclusively).
-
-       --alltags [date [date]]
-              For each day, show all tags. See --alltopics on  how  to
-              specify date ranges.
-
-       --tagcloud [date [date]]
-              Collect all tags and count them. This allows you to gen‐
-              erate a tag cloud with the use of other external  tools.
-              See --alltopics on how to specify date ranges.
-
-       --addblobs [-t tag] file [file ...]
-              Add  all  files  to  today's blobs. That is, a directory
-              called “blobs” will be created in your  data  directory.
-              Below  this, a subdirectory for each day will be created
-              (like “blobs/2012-06-07/”). gitary will never  overwrite
-              existing files.
-
-              Using -t you can specify a “tag” for your blobs.  Essen‐
-              tially, a subdirectory with that name will be created in
-              today's      blobs      (like      -t      code      for
-              “blobs/2012-06-07/code/).
-
-              Note: Unlike other options, you can't omit  the  leading
-              dash in -t.
-
-       --printblobdir
-              Prints  the absolute path to your blob directory on std‐
-              out. This can be used to create a shell alias like this:
-
-
-                   alias gblobs='cd -- "$(gitary --printblobdir)"'
-
-
-       You may have noticed that there is no option to  list  or  open
-       blobs.  This is intentional. You can easily use the shell to do
-       this. For example, to list all blobs tagged with “foobang”  you
-       could do:
-
-
-       $ gblobs
-       $ ls -al */foobang/*
-
-
-CONFIGURATION
-       All your entries are stored in the data directory. A git repos‐
-       itory   will   reside   in   this   directory.   By    default,
-       $XDG_DATA_HOME/gitary will be used or $HOME/.local/share/gitary
-       if $XDG_DATA_HOME is not  set.  Use  the  environment  variable
-       $GITARY_DATA  to change this.  If it's set, then this directory
-       is used.
-
-       Important note: Your data directory  must  exist  and  it  must
-       already  be initialized as a Git repository. gitary will not do
-       this for you.
-
-       gitary uses whichever $EDITOR and $PAGER you configured in your
-       ~/.profile.
-
-HIGHLIGHTING OF SEARCH RESULTS
-       gitary  uses ANSI escape sequences to highlight search results.
-       As a result, you may get garbled output if your  pager  is  not
-       configured  to  support  this. For example, you may wish to run
-       less(1) with the command line option -R (see environment  vari‐
-       able $LESS).
-
-       You  can  turn off coloring by using the $GITARY_SUPPRESS_COLOR
-       environment variable (see ENVIRONMENT).
-
-SYNTAX
-       Each entry should follow the following format:
-
-
-            === Topics of today ===
-            tags: linux git
-
-            Today I discovered Git. It rocks. Can be downloaded from [1].
-
-            Some code:
-            ---8<---
-            $ git init whatever
-            $ touch hello
-            $ git add hello && git ci -m 'Initial'
-            ---8<---
-
-            [1] http://git-scm.com/
-
-            Some further references:
-            -- http://en.wikiquote.org/wiki/Einstein
-            -- http://en.wikiquote.org/wiki/Monty_Python%27s_Flying_Circus
-
-
-       The head line is mandatory as is the “tags”  line.  The  search
-       routines use the head line to split up entries. Also, there's a
-       special search function that can search in the “tags” line only
-       (using  --tags).  All  other content can be free form. However,
-       there's a special search function for “references”, too  (using
-       --refs).
-
-       There's  a  syntax  highlighting  scheme for vim(1) ready to be
-       used in the .vim/ subdirectory. Thus, you should get  the  best
-       experience when using this script together with vim. If you use
-       it, you can also add the language of code areas:
-
-
-            This will be highlighted as a regular bash script:
-            ---8<---bash
-            for i in *
-            do
-                 echo "<$i>"
-            done
-            ---8<---
-
-            That's a python script:
-            ---8<---python
-            print "Hello world."
-            ---8<---
-
-
-       Currently, there's support for bash,  python,  ruby,  java,  c,
-       lua, vim, assembly and diff.
-
-       A  file  will  be deleted if it is completely empty or contains
-       only one empty line (UNIX or DOS line endings).
-
-DEPENDENCIES
-       In order to run gitary, the following tools must be installed:
-
-       ·   GNU bash,
-
-       ·   GNU awk,
-
-       ·   GNU sed,
-
-       ·   git.
-
-       Ideally, you should have to most recent versions installed.
-
-ENVIRONMENT
-       GITARY_DATA
-              If this variable is set, it must point  to  a  directory
-              where  your  git  repository will be stored. You can use
-              this to override the default location (see FILES below).
-
-       GITARY_SUPPRESS_COLOR
-              If this variable is  set  to  an  arbitray  value,  then
-              gitary won't ever print any ANSI colors.
-
-FILES
-       $XDG_DATA_HOME/gitary/
-       $HOME/.local/share/gitary/
-              Default  per-user  data directory if $GITARY_DATA is not
-              set. The $HOME variant is only used if $XDG_DATA_HOME is
-              not set.
-
-BUGS
-       Currently, no bugs are known. If you find one, we invite you to
-       report     it     at     the     GitHub      Issue      tracker
-       (http://github.com/vain/gitary/issues).
-
-LICENSE
-       gitary  is  released  as  “PIZZA-WARE”.  See  the  accompanying
-       LICENSE file.
-
-HISTORY
-       gitary was originally written by Peter Hofmann. The project was
-       started in August 2009.
-
-SEE ALSO
-       git(1), gitk(1), awk(1), sed(1), bash(1), vim(1).
-
-
-
-Git-Diary                    October 2013                    GITARY(1)
+Refer to the manpage for all options.
