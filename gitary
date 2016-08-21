@@ -156,12 +156,12 @@ new_today()
 
 search_bodies()
 {
-    grep -niHC 5 --color=always "$1" -- */*/"$entry_fname" | $pager
+    grep -EniHC 5 --color=always "$1" -- */*/"$entry_fname" | $pager
 }
 
 search_tags()
 {
-    grep -niHC 5 --color=always "^tags: .*$1" -- */*/"$entry_fname" | $pager
+    grep -EniHC 5 --color=always "^tags: ?.*$1" -- */*/"$entry_fname" | $pager
 }
 
 usage()
