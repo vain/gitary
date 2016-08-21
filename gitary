@@ -14,7 +14,7 @@ _edit()
 _list()
 {
     # Don't quote $1 here because it could be a '*'.
-    printf '%s\n' $1/*/"$entry_fname" | while read i
+    for i in $1/*/"$entry_fname"
     do
         editable=${i%/*}
         echo "$editable  $(head -n 1 -- "$i")"
@@ -33,13 +33,16 @@ list_today()
 
 blob_dir()
 {
+    # We don't provide any file management operations. This is up to the
+    # user and his tools. Instead, we provide this shortcut to print the
+    # blob directory of the last entry today or of any given entry.
     if [[ -z "$1" ]]
     then
         t=$(date +%F)
         last=$(printf '%s\n' "$t"/*/"$entry_fname" | tail -n 1)
         if [[ -z "$last" ]]
         then
-            echo "No entries have been made today, yet" >&2
+            echo "Please create an entry for today first" >&2
             return 1
         fi
         echo "${last%/*}/$blobs_fname"
@@ -81,7 +84,7 @@ continue_today()
     last=$(printf '%s\n' "$t"/*/"$entry_fname" | tail -n 1)
     if [[ -z "$last" ]]
     then
-        echo "No entries have been made today, yet" >&2
+        echo "Please create an entry for today first" >&2
         return 1
     fi
 
@@ -168,8 +171,9 @@ entry_fname=entry${GITARY_FILE_EXTENSION:-.md}
 # We rely on "ASCIIbetical" sorting order.
 export LC_COLLATE=C
 
-check_and_cd_to_datadir || exit 1
 shopt -s nullglob
+
+check_and_cd_to_datadir || exit 1
 
 if [[ -z "$1" ]]
 then
