@@ -1,4 +1,4 @@
-.TH GITARY 1 "2015-08-30" "Git-Diary" "A diary using Git"
+.TH GITARY 1 "2016-08-21" "Git-Diary" "A diary using Git"
 .SH NAME
 gitary \- a diary using
 .BR git (1)
@@ -6,106 +6,57 @@ as a backend
 .SH SYNOPSIS
 \fBgitary\fP [\fIOPTION\fP]...
 .SH DESCRIPTION
-Without any options, \fBgitary\fP starts your favourite editor to edit
-the entry for the current day. When you leave the editor, anything
-you've changed in the data directory will be automatically committed
-into the git repository. That means that \(em while writing your entry
-\(em you can place arbitrary files in the data directory. This allows
-you to store pictures or programs as well.
+Essentially, \fBgitary\fP is a wrapper around \fBgit\fP(1) and your
+editor. It's a diary. Everything you write will be committed to a Git
+repository. It also provides basic search functions.
+.P
+Many options open your editor and, when you quit it, any changes will be
+committed to your repository. This also includes a \(lqcleanup\(rq step
+where all empty files (except for blobs) and directories will be
+removed.
 .SH OPTIONS
-All of these options are optional and mutual exclusive. Note that they
-can start with one, two or no dashes.
+Without any options, \fBgitary\fP lists all entries made today. 
+.P
+All other arguments are optional and mutual exclusive. Note that they
+can start with one, two or no dashes. Furthermore, the very first
+character is sufficient, e.g. \fB\-\-edit\fP can be abbreviated by
+\fBe\fP.
 .TP
-\fB\-\-search\fP \fIword\fP [\fIword ...\fP]
-Search entire entries and print items that include one of the words or a
-part of them.
+\fB\-\-all\fP
+List all entries ever made and their subject line. The entries are
+printed in two columns: The first column is an identifier (e.g.,
+\(lq2016-08-21/00\(rq) which can be used in other operations like
+\fB\-\-edit\fP or \fB\-\-blob\fP to address this particular entry.
 .TP
-\fB\-\-tags\fP \fIword\fP [\fIword ...\fP]
+\fB\-\-blob\fP [\fIentry\fP]
+Print the directory where you are supposed to store \(lqblobs\(rq
+(images, videos, programs, ...). If \fIentry\fP is not given, the
+directory for the most recent entry today will be printed. \fIentry\fP
+must be an identifier as printed by listing operations like
+\fB\-\-all\fP.
+.TP
+\fB\-\-continue\fP
+Continue editing the most recent entry of today.
+.TP
+\fB\-\-edit\fP \fIentry\fP
+Edit the specified \fIentry\fP using an identifier as printed by listing
+operations like \fB\-\-all\fP.
+.TP
+\fB\-\-new\fP
+Create a new entry today.
+.TP
+\fB\-\-path\fP
+Print the base directory of your Git repository.
+.TP
+\fB\-\-search\fP \fIregex\fP
+Search entire entries and print items that match the given regular
+expression. You can use anything that is understood by GNU \fBgrep
+\-E\fP.
+.TP
+\fB\-\-tags\fP \fIregex\fP
 Same as \fB\-\-search\fP, but only search in taglines.
-.TP
-\fB\-\-refs\fP \fIword\fP [\fIword ...\fP]
-Search in references. Prints out each entry if it contains a reference
-like \fI\(lq\-\- Einstein\(rq\fP or \fI\(lq[1] www.archlinux.org\(rq\fP.
-That is, references start with two dashes and one blank at the beginning
-of a line \(em but you can also use a number in square brackets instead.
-.TP
-\fB\-\-edit\fP \fIday\fP [\fIday ...\fP]
-Edit the given day. \fIday\fP can be any string that is understood by
-\fBdate\fP(1), e.g. \(lq2009-09-31\(rq, \(lqyesterday\(rq or \(lqa week
-ago\(rq. (Don't forget quoting when working at the shell.)
-
-If you specify multiple days, they are edited one after another.
-.TP
-\fB\-\-delete\fP \fIday\fP [\fIday ...\fP]
-Deletes the given days from the working directory. This includes any
-blobs. Of course, the deleted data will still be accessible through Git.
-
-\fIday\fP can be anything that \fB\-\-edit\fP accepts.
-.TP
-\fB\-\-gitk\fP
-Launch \fBgitk\fP(1) in the data directory.
-.TP
-\fB\-\-viewall\fP
-Show all entries in chronological order in the program specified in
-your $\fBPAGER\fP environment variable.
-.TP
-\fB\-\-alltopics\fP [\fIdate\fP [\fIdate\fP]]
-Only show topics. \fIdate\fP can be one of \fIYYYY\fP, \fIYYYY-MM\fP or
-\fIYYYY-MM-DD\fP. If only one \fIdate\fP is given, show all topics of
-this date. That is, \(lq\-\-alltopics 2009-11\(rq shows all topics of
-November 2009. Accordingly, \(lq\-\-alltopics 2010-02-03\(rq shows all
-topics of the 3rd of February 2010.
-
-If two \fIdate\fPs are given, then show all topics written during that
-period of time. \(lq\-\-alltopics 2009-11 2010-03-12\(rq will show all
-topics from the 1st of November 2009 until the 12th of March 2010
-(inclusively).
-.TP
-\fB\-\-alltags\fP [\fIdate\fP [\fIdate\fP]]
-For each day, show all tags. See \fB\-\-alltopics\fP on how to specify
-date ranges.
-.TP
-\fB\-\-tagcloud\fP [\fIdate\fP [\fIdate\fP]]
-Collect all tags and count them. This allows you to generate a tag cloud
-with the use of other external tools. See \fB\-\-alltopics\fP on how to
-specify date ranges.
-.TP
-\fB\-\-addblobs\fP [\fB\-t\fP \fItag\fP] \fIfile\fP [\fIfile ...\fP]
-Add all files to today's blobs. That is, a directory called
-\(lqblobs\(rq will be created in your data directory. Below this, a
-subdirectory for each day will be created (like
-\(lq\fIblobs/2012-06-07/\fP\(rq). \fBgitary\fP will never overwrite
-existing files.
-
-Using \fB\-t\fP you can specify a \(lqtag\(rq for your blobs.
-Essentially, a subdirectory with that name will be created in today's
-blobs (like \fB\-t code\fP for \(lq\fIblobs/2012-06-07/code/\fP).
-
-Note: Unlike other options, you can't omit the leading dash in
-\fB\-t\fP.
-.TP
-\fB\-\-printblobdir\fP
-Prints the absolute path to your blob directory on \fIstdout\fP. This
-can be used to create a shell alias like this:
-
-\f(CW
-.nf
-	alias gblobs='cd -- "$(gitary --printblobdir)"'
-.fi
-\fP
-.P
-You may have noticed that there is no option to list or open blobs. This
-is intentional. You can easily use the shell to do this. For example, to
-list all blobs tagged with \(lqfoobang\(rq you could do:
-.P
-\f(CW
-.nf
-$ gblobs
-$ ls -al */foobang/*
-.fi
-\fP
 .SH CONFIGURATION
-All your entries are stored in the data directory. A git repository will
+All your entries are stored in the data directory. A Git repository will
 reside in this directory. By default, \fI$XDG_DATA_HOME/gitary\fP will
 be used or \fI$HOME/.local/share/gitary\fP if $\fBXDG_DATA_HOME\fP is
 not set. Use the environment variable $\fBGITARY_DATA\fP to change this.
@@ -117,85 +68,30 @@ this for you.
 .P
 \fBgitary\fP uses whichever $\fBEDITOR\fP and $\fBPAGER\fP you
 configured in your \fI~/.profile\fP.
-.SH "HIGHLIGHTING OF SEARCH RESULTS"
-\fBgitary\fP uses ANSI escape sequences to highlight search results. As
-a result, you \fImay\fP get garbled output if your pager is not
-configured to support this. For example, you may wish to run
-\fBless\fP(1) with the command line option \fB\-R\fP (see environment
-variable $\fBLESS\fP).
+.SH "FILE FORMAT"
+\fBgitary\fP does not really care about the file format you use. By
+default, it creates files with the extension \(lq.md\(rq, suggesting
+Markdown. You can change that by setting $\fBGITARY_FILE_EXTENSION\fP.
 .P
-You can turn off coloring by using the $\fBGITARY_SUPPRESS_COLOR\fP
-environment variable (see \fBENVIRONMENT\fP).
-.SH SYNTAX
-Each entry should follow the following format:
+There are only two things you should consider:
+.IP 1. 4
+The very first line of the file should contain a \(lqsubject\(rq for the
+entry.
+.IP 2. 4
+Anywhere in the file, there can be a line starting with \(lqtags:\(rq.
+You can use this line to store any tags which you can then search for
+using \fB\-\-tags\fP.
 .P
-\f(CW
-.nf
-	=== Topics of today ===
-	tags: linux git
-
-	Today I discovered Git. It rocks. Can be downloaded from [1].
-
-	Some code:
-	---8<---
-	$ git init whatever
-	$ touch hello
-	$ git add hello && git ci -m 'Initial'
-	---8<---
-
-	[1] http://git-scm.com/
-
-	Some further references:
-	-- http://en.wikiquote.org/wiki/Einstein
-	-- http://en.wikiquote.org/wiki/Monty_Python%27s_Flying_Circus
-.fi
-\fP
-.P
-The head line is mandatory as is the \(lqtags\(rq line. The search
-routines use the head line to split up entries. Also, there's a special
-search function that can search in the \(lqtags\(rq line only (using
-\fB\-\-tags\fP). All other content can be free form. However, there's a
-special search function for \(lqreferences\(rq, too (using
-\fB\-\-refs\fP).
-.P
-There's a syntax highlighting scheme for \fBvim\fR(1) ready to be used
-in the \fI.vim/\fP subdirectory. Thus, you should get the best
-experience when using this script together with \fBvim\fP. If you use
-it, you can also add the language of code areas:
-.P
-\f(CW
-.nf
-	This will be highlighted as a regular bash script:
-	---8<---bash
-	for i in *
-	do
-		echo "<$i>"
-	done
-	---8<---
-
-	That's a python script:
-	---8<---python
-	print "Hello world."
-	---8<---
-.fi
-\fP
-.P
-Currently, there's support for \fBbash\fP, \fBpython\fP, \fBruby\fP,
-\fBjava\fP, \fBc\fP, \fBlua\fP, \fBvim\fP, \fBassembly\fP and
-\fBdiff\fP.
-.P
-A file will be deleted if it is completely empty or contains only one
-empty line (UNIX or DOS line endings).
 .SH ENVIRONMENT
 .TP
 .B GITARY_DATA
-If this variable is set, it must point to a directory where your git
+If this variable is set, it must point to a directory where your Git
 repository will be stored. You can use this to override the default
 location (see \fBFILES\fP below).
 .TP
-.B GITARY_SUPPRESS_COLOR
-If this variable is set to an arbitray value, then \fBgitary\fP won't
-ever print any ANSI colors.
+.B GITARY_FILE_EXTENSION
+Entry files will use this string as a file name extension. Defaults to
+\fB.md\fP.
 .SH FILES
 .TP
 \fI$XDG_DATA_HOME/gitary/\fP
@@ -214,8 +110,4 @@ it at the GitHub Issue tracker (http://github.com/vain/gitary/issues).
 started in August 2009.
 .SH "SEE ALSO"
 .BR git (1),
-.BR gitk (1),
-.BR awk (1),
-.BR sed (1),
-.BR bash (1),
-.BR vim (1).
+.BR bash (1).
