@@ -99,7 +99,16 @@ edit_entry()
         return 1
     fi
 
-    _edit "$1"/"$entry_fname"
+    e=$1
+    [[ "$e" == *"$entry_fname" ]] || e="$e/$entry_fname"
+
+    if [[ ! -f "$e" ]]
+    then
+        echo "Trying to edit '$e', which does not exist" >&2
+        return 1
+    fi
+
+    _edit "$e"
 }
 
 check_and_cd_to_datadir()
