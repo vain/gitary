@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Try your best at converting an old-style repo into the new 2016
+# format. Since the old format was almost "free form", we can't
+# transform it into "well defined" Markdown (or something else). We can
+# only split files and copy blobs around.
+#
+# Regarding blobs: They are always copied to entry 00 since the old
+# format did not specify which entry a blob belongs to.
+
+input_dir=$1
+output_dir=$2
+
+shopt -s nullglob
+
+for i in "$input_dir"/*.gitary
+do
+    echo "Processing '$i'"
+
+    date=${i##*/}
+    date=${date%.gitary}
+
+    gawk -v basedir="$date" -v output_dir="$output_dir" '
+        BEGIN {
+            RS = "=== "
+        }
+        {
+            if (NR > 1)
+            {
+                at_hex = sprintf("%02x", at)
+                cmd = sprintf("mkdir -p %s/%s/%s", output_dir, basedir, at_hex)
+                printf("  %s\n", cmd)
+                system(cmd)
+
+                entry = sprintf("%s/%s/%s/entry.md", output_dir, basedir, at_hex)
+                printf("  writing %s\n", entry)
+                print "=== " $0 > entry
+
+                at++
+            }
+        }
+    ' "$i"
+
+    if [[ -d "$input_dir"/blobs/"$date" ]]
+    then
+        echo "  copying blobs ..."
+        mkdir -p "$output_dir/$date/00/blobs"
+        (
+            shopt -s dotglob
+            cp -nav "$input_dir"/blobs/"$date"/* "$output_dir/$date/00/blobs"
+        )
+    fi
+done
