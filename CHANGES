@@ -1,0 +1,20 @@
+Release history for gitary
+
+next
+  [Changed]
+  - This is a major and backwards-incompatible rewrite of gitary.
+  - The directory and file layout has been changed: There now is one
+    directory for each day and one subdirectory for each entry that day.
+    Blobs now belong to an entry, rather than to a day.
+  - Gitary is now almost completely agnostic of the file format you use.
+    The first line of a file should contain a subject. Optionally, there
+    can be a "tag" line. By default, gitary creates files with an ".md"
+    extension (suggesting Markdown), but you can easily change that.
+  - Many command line options have been removed since I never use them,
+    others have been renamed.
+  - There is a utility script to convert old-style repos to the new
+    layout.
+
+v16.08 and earlier releases
+  - Sorry, the CHANGES file did not exist back then. Please refer to the
+    Git log.
