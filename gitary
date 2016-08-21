@@ -192,13 +192,13 @@ fi
 
 opt=${1##*-}
 case "$opt" in
-    a|all)       list_all               ;;
-    b|blob)      blob_dir "$2"          ;;
-    c|continue)  continue_today         ;;
-    e|edit)      edit_entry "$2"        ;;
-    n|new)       new_today              ;;
-    p|path)      pwd                    ;;
-    s|search)    search_bodies "$2"     ;;
-    t|tags)      search_tags "$2"       ;;
-    *)           usage                  ;;
+    a|all)       list_all            ;;
+    b|blob)      blob_dir "$2"       ;;
+    c|continue)  continue_today      ;;
+    e|edit)      edit_entry "$2"     ;;
+    n|new)       new_today           ;;
+    p|path)      pwd                 ;;
+    s|search)    search_bodies "$2"  ;;
+    t|tags)      search_tags "$2"    ;;
+    *)           usage               ;;
 esac
