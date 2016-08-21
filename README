@@ -3,7 +3,7 @@
                                  ======
 
 
-A diary using a Git repo as a backend, simple markup language.
+A diary using a Git repo as a backend.
 
 
 Installation
@@ -11,9 +11,8 @@ Installation
 
 gitary is a Bash script and relies on the following external tools:
 
-    - GNU awk
     - GNU coreutils
-    - GNU sed
+    - GNU grep
     - Git
 
 If you're on Arch Linux, you can use the following AUR package:
