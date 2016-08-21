@@ -1,401 +1,191 @@
 #!/bin/bash
 
-# --- Function library
-commit()
+_edit()
 {
-	(
-		cd "$datadir"
-		git add -A .
-		git commit -a -m "Auto-Commit by gitary on $HOSTNAME"
-	)
+    basedir=$(dirname -- "$1")
+    mkdir -p -- "$basedir" || { echo "Could not create '$basedir'" >&2; return 1; }
+
+    $editor "$1"
+
+    clean_empty
+    commit
 }
 
-search()
+_list()
 {
-	# Only search in tags or the whole entry? Only refs?
-	case "$1" in
-		-r)
-			prefix="\n(-- |\[[[:digit:]]+\])[^\n]*"
-			msgprefix="references"
-			;;
-		-t)
-			prefix="\ntags:[^\n]*"
-			msgprefix="tags"
-			;;
-		-a)
-			prefix=""
-			msgprefix="everything"
-			;;
-	esac
-	shift
-	search="$@"
+    # Don't quote $1 here because it could be a '*'.
+    printf '%s\n' $1/*/"$entry_fname" | while read i
+    do
+        editable=${i%/*}
+        echo "$editable  $(head -n 1 -- "$i")"
+    done
+}
 
-	# "Explode" the list of tags. This'll result in a list of
-	# alternative search terms (boolean OR).
-	search="(${search//[[:space:]]/|})"
+list_all()
+{
+    _list '*'
+}
 
-	# gawk will do all the magic.
-	if [[ -z "$GITARY_SUPPRESS_COLOR" ]]
-	then
-		col_hit=$'\e[1;31m'
-		col_reset=$'\e[0m'
-	else
-		col_hit=
-		col_reset=
-	fi
-	gawk '
-		BEGIN {
-			IGNORECASE=1
-			RS="=== "
-			print "Searching '"$msgprefix"' for: '"$search"'\n\n"
-		}
+list_today()
+{
+    _list "$(date +%F)"
+}
 
-		/'"$prefix$search"'/ {
-			entrydate=FILENAME
-			gsub(/\.gitary/, "", entrydate)
-			gsub(/^.*\//, "", entrydate)
-			gsub(/\n+$/, "", $0)
-			gsub(/'"$search"'/, "'"$col_hit"'&'"$col_reset"'", $0)
-			cmd="date -d \"" entrydate "\" \"+%a, %F\""
-			cmd | getline fmt
-			close(cmd)
-			gsub(/\n+$/, "", fmt)
-			print "#############################################"
-			print "               " fmt
-			print "#############################################"
-			print "\n"
-			print "=== " $0 "\n\n\n\n"
-		}' "$datadir"/*gitary | $pager
+blob_dir()
+{
+    if [[ -z "$1" ]]
+    then
+        t=$(date +%F)
+        last=$(printf '%s\n' "$t"/*/"$entry_fname" | tail -n 1)
+        if [[ -z "$last" ]]
+        then
+            echo "No entries have been made today, yet" >&2
+            return 1
+        fi
+        echo "${last%/*}/$blobs_fname"
+    else
+        echo "$1/$blobs_fname"
+    fi
 }
 
 clean_empty()
 {
-	# Remove files with a size of 0, 1 or 2 bytes.
-	find -L "$datadir" -maxdepth 1 -type f -size -3c \
-		-printf "Cleaning up empty file '%P'\n" -delete
+    # Remove files with a size of 0, 1 or 2 bytes, i.e. "completely
+    # empty", "only a UNIX newline", or "only a DOS newline".
+    #
+    # Note that we can't use find's "-delete" because it turns on
+    # "-depth" which conflicts with "-prune".
+    #
+    # We use a max depth of 3 to not touch any blob *files*. If the blob
+    # directory itself is empty, though, it will be removed.
+    find -H . -maxdepth 3 \
+        -type d -name .git -prune -o \
+        -type f -size -3c \
+        -printf "Cleaning up empty file '%P'\n" -exec rm {} +
+
+    find -H . -maxdepth 3 \
+        -type d -name .git -prune -o \
+        -type d -empty \
+        -printf "Cleaning up empty directory '%P'\n" -exec rmdir {} +
 }
 
-edit()
+commit()
 {
-	for i
-	do
-		when=$(date -d "$i" +%F)
-		if (( $? == 0 ))
-		then
-			$editor "$datadir/$when.gitary"
-		fi
-	done
-
-	clean_empty
-	commit
+    git add -A .
+    git commit -a -m "Auto-Commit by gitary on $HOSTNAME"
 }
 
-delete()
+continue_today()
 {
-	for i
-	do
-		when=$(date -d "$i" +%F)
-		if (( $? == 0 ))
-		then
-			rm -v "$datadir/$when.gitary"
-			rm -Rv "$datadir/blobs/$when"
-		fi
-	done
+    t=$(date +%F)
+    last=$(printf '%s\n' "$t"/*/"$entry_fname" | tail -n 1)
+    if [[ -z "$last" ]]
+    then
+        echo "No entries have been made today, yet" >&2
+        return 1
+    fi
 
-	clean_empty
-	commit
+    _edit "$last"
 }
 
-viewall()
+edit_entry()
 {
-	(
-		echo
-		echo
-		for i in "$datadir"/*gitary
-		do
-			bname=$(basename "$i")
-			bname=${bname%%.*}
-			fmt=$(date -d "$bname" +"%a, %F")
-			echo "#############################################"
-			echo "               $fmt"
-			echo "#############################################"
-			echo
-			echo
-			cat "$i"
-			echo
-			echo
-			echo
-			echo
-		done
-	) | $pager
+    if [[ -z "$1" ]]
+    then
+        echo "Error: edit_entry() needs an argument (e.g., '2009-08-01/04')" >&2
+        return 1
+    fi
+
+    _edit "$1"/"$entry_fname"
 }
 
-date_complete()
+check_and_cd_to_datadir()
 {
-	# Given an incomplete date like "2010" or "2010-01", add the missing
-	# part such that it points to the beginning of that time span. For
-	# example, extend "2010" with "-01-01" meaning the very first moment
-	# of the year 2010.
+    if ! type git >/dev/null 2>&1
+    then
+        echo "Command 'git' not found" >&2
+        return 1
+    fi
 
-	OIFS=$IFS
-	IFS='-'
-	set -- $1
-	IFS=$OIFS
-
-	case $# in
-		1) echo "$1-01-01" ;;
-		2) echo "$1-$2-01" ;;
-		3) echo "$1-$2-$3" ;;
-	esac
+    if ! cd -- "$datadir" >/dev/null 2>&1 || ! git status >/dev/null 2>&1
+    then
+        echo "'$datadir' is not a Git repository, please initialize it" >&2
+        return 1
+    fi
 }
 
-date_complete_next()
+new_today()
 {
-	# Like date_complete, but add one "entity". That is, "2010" will
-	# become "2011" and "2010-04-12" will become "2010-04-13".
+    # Directory names go like '2016-08-21/d4/', i.e. the current date
+    # followed by a hex representation of an 8 bit integer. This means
+    # you can create a total of 256 entries per day, which should be
+    # more than enough for a single person. :-)
+    #
+    # We pad the number with a leading zero, if necessary, which means
+    # that we get an implicit sorting order and don't have to call
+    # "sort" ourselves.
+    day=$(date +%F)
+    next='00'
+    while [[ -f "$day"/"$next"/"$entry_fname" ]]
+    do
+        next=$((16#$next))
+        (( next++ ))
+        printf -v next '%02x' "$next"
+    done
 
-	OIFS=$IFS
-	IFS='-'
-	set -- $1
-	IFS=$OIFS
+    if [[ "${#next}" -gt 2 ]]
+    then
+        echo "Maximum number of entries per day reached" >&2
+        return 1
+    fi
 
-	case $# in
-		1) echo "$(($1 + 1))-01-01"                   ;;
-		2) echo "$(date -d "$1-$2-01 + 1 month" +%F)" ;;
-		3) echo "$(date -d "$1-$2-$3 + 1 day" +%F)"   ;;
-	esac
+    _edit "$day/$next/$entry_fname"
 }
 
-find_date_ranges()
+search_bodies()
 {
-	case $# in
-		0)
-			# Show all topics.
-			echo 0
-			echo z
-			;;
-		1)
-			# Show topics of one year, month or day.
-			date_complete "$1"
-			date_complete_next "$1"
-			;;
-		2)
-			# Show all topics in a given range.
-			date_complete "$1"
-			date_complete_next "$2"
-			;;
-	esac
+    grep -niHC 5 --color=always "$1" -- */*/"$entry_fname" | $pager
 }
 
-alltopics()
+search_tags()
 {
-	range=($(find_date_ranges "$@"))
-
-	# Search matching filenames and print their topics.
-	for i in "$datadir"/*gitary
-	do
-		day=$(basename "$i")
-		day=${day%%.*}
-		if [[ $day > ${range[0]} ]] ||
-		   [[ $day == ${range[0]} ]] &&
-		   [[ $day < ${range[1]} ]]
-		then
-			# Extract all topic lines from that file.
-			fmt=$(date -d "$day" "+%a, %F")
-			echo "$fmt"
-			sed -rn 's/^=== (.*) ===$/\t\1/p' "$i"
-		fi
-	done | $pager
+    grep -niHC 5 --color=always "^tags: .*$1" -- */*/"$entry_fname" | $pager
 }
 
-alltags()
+usage()
 {
-	range=($(find_date_ranges "$@"))
-
-	# Search matching filenames and grab their tags.
-	for i in "$datadir"/*gitary
-	do
-		day=$(basename "$i")
-		day=${day%%.*}
-		if [[ $day > ${range[0]} ]] ||
-		   [[ $day == ${range[0]} ]] &&
-		   [[ $day < ${range[1]} ]]
-		then
-			# Extract all tag lines from that file.
-			fmt=$(date -d "$day" "+%a, %F")
-			echo "$fmt"
-			sed -n 's/^tags: /\t/p' "$i"
-		fi
-	done | $pager
-}
-
-tagcloud()
-{
-	range=($(find_date_ranges "$@"))
-
-	# Search matching filenames and grab their tags.
-	declare -A tagcounts
-	for i in "$datadir"/*gitary
-	do
-		day=$(basename "$i")
-		day=${day%%.*}
-		if [[ $day > ${range[0]} ]] ||
-		   [[ $day == ${range[0]} ]] &&
-		   [[ $day < ${range[1]} ]]
-		then
-			# Extract all tag lines from that file, replace spaces
-			# between tags into newlines. sort and uniq will do the
-			# counting (at the end of this loop).
-			sed -n 's/^tags: //p' "$i" | tr ' ' '\n'
-		fi
-	done | sort | uniq -c | sort -k1rn | $pager
-}
-
-checkdatadir()
-{
-	if [[ ! -d "$datadir"/.git ]]
-	then
-		echo "\`$datadir' is not a Git repository." >&2
-		return 1
-	fi
-}
-
-addblobs()
-{
-	# Set a tag for these blobs? Essentially, a tag is a subdirectory.
-	case "$1" in
-		-t)
-			tag="$2"
-			shift
-			shift
-			;;
-		*)
-			tag=
-			;;
-	esac
-
-	# Create a new subdirectory for today. %F is locale-independent.
-	subdir="$datadir/blobs/$(date +%F)/$tag"
-	mkdir -p "$subdir" || return 1
-
-	for i
-	do
-		# Never overwrite existing files. cp doesn't inform us about
-		# existing files, though, so show a warning.
-		fname="$subdir/$(basename "$i")"
-		[[ -e "$fname" ]] && echo "\`$i' already exists in today's blobs." >&2
-		cp -n "$i" "$fname"
-	done
-
-	commit
-}
-
-printblobdir()
-{
-	readlink -e "$datadir/blobs"
+    echo "Unknown option, please refer to the manpage" >&2
 }
 
 
-# --- Main starts here
-
-# Use default settings as fallback.
 default_prefix=${XDG_DATA_HOME:-$HOME/.local/share}
 datadir=${GITARY_DATA:-$default_prefix/gitary}
 editor=${EDITOR:-vim}
 pager=${PAGER:-less}
+blobs_fname=blobs
+entry_fname=entry${GITARY_FILE_EXTENSION:-.md}
 
-# Check if the user only wants to view the help page. We have none.
-# Refer to the man page.
-opt=${1#-}
-case "${opt#-}" in
-	help|h)
-		cat >&2 <<-EOF
-		gitary is a diary using git as its backend.
+# We rely on "ASCIIbetical" sorting order.
+export LC_COLLATE=C
 
-		There is no summary page. If you need help, please have a look
-		at the manual page (e.g., run "man gitary").
-		EOF
-		exit 1
-		;;
-esac
-
-# Okay, now check the data dir and process all other options.
-checkdatadir || exit 1
+check_and_cd_to_datadir || exit 1
+shopt -s nullglob
 
 if [[ -z "$1" ]]
 then
-	# Create a new entry for today.
-	edit "$(date +%F)"
-	exit
+    list_today
+    exit
 fi
 
-# Remove up to two leading dashes from $1.
-case "${opt#-}" in
-	tags)
-		# Only search for tags.
-		shift
-		search -t "$@"
-		;;
-	refs)
-		# Only search for references.
-		shift
-		search -r "$@"
-		;;
-	search)
-		# Search whole entries.
-		shift
-		search -a "$@"
-		;;
-	gitk)
-		(
-			cd "$datadir"
-			gitk --all
-		)
-		;;
-	edit)
-		# Edit or create an arbitrary entry.
-		shift
-		edit "$@"
-		;;
-	delete)
-		# Delete existing entries (including any blobs) from the working
-		# directory.
-		shift
-		delete "$@"
-		;;
-	viewall)
-		# Show all entries in chronological order.
-		viewall
-		;;
-	alltopics)
-		# Show all topics. A time range may be given as an optional
-		# argument.
-		shift
-		alltopics "$@"
-		;;
-	alltags)
-		# Show all tags. Similar to --alltopics, a time range may be
-		# given.
-		shift
-		alltags "$@"
-		;;
-	tagcloud)
-		# Count tags. Similar to --alltopics, a time range may be
-		# given.
-		shift
-		tagcloud "$@"
-		;;
-	addblobs)
-		# Add all files as blobs for the current day.
-		shift
-		addblobs "$@"
-		;;
-	printblobdir)
-		# Prints the blob directory, so you can easily work with it.
-		printblobdir
-		;;
-	*)
-		echo "$(basename "$0"): Invalid option \`$1'. See man page." >&2
-		exit 1
-		;;
+opt=${1##*-}
+case "$opt" in
+    a|all)       list_all               ;;
+    b|blob)      blob_dir "$2"          ;;
+    c|continue)  continue_today         ;;
+    e|edit)      edit_entry "$2"        ;;
+    n|new)       new_today              ;;
+    p|path)      pwd                    ;;
+    s|search)    search_bodies "$2"     ;;
+    t|tags)      search_tags "$2"       ;;
+    *)           usage                  ;;
 esac
