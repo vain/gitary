@@ -119,7 +119,7 @@ check_and_cd_to_datadir()
         return 1
     fi
 
-    if ! cd -- "$datadir" >/dev/null 2>&1 || ! git status >/dev/null 2>&1
+    if ! cd -- "$datadir" >/dev/null 2>&1 || ! git rev-parse HEAD >/dev/null 2>&1
     then
         echo "'$datadir' is not a Git repository, please initialize it" >&2
         return 1
