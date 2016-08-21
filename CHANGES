@@ -10,6 +10,8 @@ next
     The first line of a file should contain a subject. Optionally, there
     can be a "tag" line. By default, gitary creates files with an ".md"
     extension (suggesting Markdown), but you can easily change that.
+  - Blobs can no longer be tagged. Instead, as they now belong to one
+    individual entry, you could say that they inherit this entry's tags.
   - Many command line options have been removed since I never use them,
     others have been renamed.
   - There is a utility script to convert old-style repos to the new
