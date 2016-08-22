@@ -128,30 +128,9 @@ check_and_cd_to_datadir()
 
 new_today()
 {
-    # Directory names go like '2016-08-21/d4/', i.e. the current date
-    # followed by a hex representation of an 8 bit integer. This means
-    # you can create a total of 256 entries per day, which should be
-    # more than enough for a single person. :-)
-    #
-    # We pad the number with a leading zero, if necessary, which means
-    # that we get an implicit sorting order and don't have to call
-    # "sort" ourselves.
     day=$(date +%F)
-    next='00'
-    while [[ -f "$day"/"$next"/"$entry_fname" ]]
-    do
-        next=$((16#$next))
-        (( next++ ))
-        printf -v next '%02x' "$next"
-    done
-
-    if [[ "${#next}" -gt 2 ]]
-    then
-        echo "Maximum number of entries per day reached" >&2
-        return 1
-    fi
-
-    _edit "$day/$next/$entry_fname"
+    etime=$(date +%H-%M-%S)
+    _edit "$day/$etime/$entry_fname"
 }
 
 search_bodies()

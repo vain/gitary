@@ -5,8 +5,8 @@
 # transform it into "well defined" Markdown (or something else). We can
 # only split files and copy blobs around.
 #
-# Regarding blobs: They are always copied to entry 00 since the old
-# format did not specify which entry a blob belongs to.
+# Regarding blobs: They are always copied to entry 00-00-00 since the
+# old format did not specify which entry a blob belongs to.
 
 input_dir=$1
 output_dir=$2
@@ -27,12 +27,12 @@ do
         {
             if (NR > 1)
             {
-                at_hex = sprintf("%02x", at)
-                cmd = sprintf("mkdir -p %s/%s/%s", output_dir, basedir, at_hex)
+                etime = sprintf("%02d-%02d-00", int(at / 60), at % 60)
+                cmd = sprintf("mkdir -p %s/%s/%s", output_dir, basedir, etime)
                 printf("  %s\n", cmd)
                 system(cmd)
 
-                entry = sprintf("%s/%s/%s/entry.md", output_dir, basedir, at_hex)
+                entry = sprintf("%s/%s/%s/entry.md", output_dir, basedir, etime)
                 printf("  writing %s\n", entry)
                 print "=== " $0 > entry
 
@@ -44,10 +44,10 @@ do
     if [[ -d "$input_dir"/blobs/"$date" ]]
     then
         echo "  copying blobs ..."
-        mkdir -p "$output_dir/$date/00/blobs"
+        mkdir -p "$output_dir/$date/00-00-00/blobs"
         (
             shopt -s dotglob
-            cp -nav "$input_dir"/blobs/"$date"/* "$output_dir/$date/00/blobs"
+            cp -nav "$input_dir"/blobs/"$date"/* "$output_dir/$date/00-00-00/blobs"
         )
     fi
 done
