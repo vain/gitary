@@ -33,6 +33,6 @@ data directory:
 
 You can then run the program from any directory:
 
-    $ gitary
+    $ gitary --new
 
 Refer to the manpage for all options.
