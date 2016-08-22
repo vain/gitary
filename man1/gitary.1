@@ -42,6 +42,12 @@ Continue editing the most recent entry of today.
 Edit the specified \fIentry\fP using an identifier as printed by listing
 operations like \fB\-\-all\fP.
 .TP
+\fB\-\-full\-cleanup\fP
+Before committing any changes to the repo, \fBgitary\fP tries to remove
+empty entry files and empty directories. It does use some optimization
+to speed up that process. If you want to skip these optimizations and
+run a full clean up process, use this option.
+.TP
 \fB\-\-new\fP
 Create a new entry today.
 .TP

@@ -53,6 +53,38 @@ blob_dir()
 
 clean_empty()
 {
+    if [[ "$1" != yes ]]
+    then
+        # Let's consider the following scenario:
+        #
+        # The user has started gitary and began writing an entry. It
+        # took him quite a while, let's say "three hours", but in the
+        # end, he decided to delete everything he wrote and quit the
+        # editor.
+        #
+        # This leaves us with an empty "entry.md". If we were to clean
+        # up that file, there might be some now empty parent directories
+        # which can also be cleaned up. *This* is why this function
+        # exists in the first place: We want to detect if the user has
+        # aborted writing and then clean up unused files/directories.
+        #
+        # I speculate this is a common scenario.
+        #
+        # On the other hand, under what circumstances could we find
+        # empty files/directories that have *not been touched* for quite
+        # a while? I speculate that this is very rare.
+        #
+        # This means that when traversing the repo and looking for files
+        # to delete, we can prune any "old" directories.
+        optimization='-type d -mtime +1 -prune -o'
+    else
+        # Since the optimization above can indeed leave some files
+        # behind, the user can optionally run a full clean up process
+        # (which might take quite a while, depending on the size of the
+        # repo and the user's hardware).
+        optimization=''
+    fi
+
     # Remove files with a size of 0, 1 or 2 bytes, i.e. "completely
     # empty", "only a UNIX newline", or "only a DOS newline".
     #
@@ -63,11 +95,13 @@ clean_empty()
     # directory itself is empty, though, it will be removed.
     find -H . -maxdepth 3 \
         -type d -name .git -prune -o \
+        $optimization \
         -type f -size -3c \
         -printf "Cleaning up empty file '%P'\n" -exec rm {} +
 
     find -H . -maxdepth 3 \
         -type d -name .git -prune -o \
+        $optimization \
         -type d -empty \
         -printf "Cleaning up empty directory '%P'\n" -exec rmdir {} +
 }
@@ -171,13 +205,14 @@ fi
 
 opt=${1##*-}
 case "$opt" in
-    a|all)       list_all            ;;
-    b|blob)      blob_dir "$2"       ;;
-    c|continue)  continue_today      ;;
-    e|edit)      edit_entry "$2"     ;;
-    n|new)       new_today           ;;
-    p|path)      pwd                 ;;
-    s|search)    search_bodies "$2"  ;;
-    t|tags)      search_tags "$2"    ;;
-    *)           usage               ;;
+    a|all)           list_all            ;;
+    b|blob)          blob_dir "$2"       ;;
+    c|continue)      continue_today      ;;
+    e|edit)          edit_entry "$2"     ;;
+    f|full-cleanup)  clean_empty yes     ;;
+    n|new)           new_today           ;;
+    p|path)          pwd                 ;;
+    s|search)        search_bodies "$2"  ;;
+    t|tags)          search_tags "$2"    ;;
+    *)               usage               ;;
 esac
