@@ -11,24 +11,25 @@ _edit()
     commit
 }
 
-_list()
+list_all()
 {
-    # Don't quote $1 here because it could be a '*'.
-    for i in $1/*/"$entry_fname"
+    for i in */*/"$entry_fname"
     do
         editable=${i%/*}
         echo "$editable  $(head -n 1 -- "$i")"
     done
 }
 
-list_all()
+list_recent()
 {
-    _list '*'
-}
-
-list_today()
-{
-    _list "$(date +%F)"
+    find -H . -mindepth 3 -maxdepth 3 -name "$entry_fname" -printf '%P\n' |
+    sort |
+    tail -n "${GITARY_RECENT_ITEMS:-10}" |
+    while read -r
+    do
+        editable=${REPLY%/*}
+        echo "$editable  $(head -n 1 -- "$REPLY")"
+    done
 }
 
 blob_dir()
@@ -213,7 +214,7 @@ check_and_cd_to_datadir || exit 1
 
 if [[ -z "$1" ]]
 then
-    list_today
+    list_recent
     exit
 fi
 
