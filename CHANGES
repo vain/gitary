@@ -1,6 +1,6 @@
 Release history for gitary
 
-next
+v17.03  2017-03-11
   [Changed]
   - When invoked without arguments, gitary now shows the last $n items
     (the default being 10). Can be customized by setting
