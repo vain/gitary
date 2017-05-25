@@ -1,5 +1,11 @@
 Release history for gitary
 
+next
+  [Changed]
+  - "--blob $entry" now prints the full path to this entry's blob
+    directory.
+  - "--blob" now always requires you to specify an entry.
+
 v17.03  2017-03-11
   [Changed]
   - When invoked without arguments, gitary now shows the last $n items

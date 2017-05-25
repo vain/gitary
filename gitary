@@ -36,20 +36,24 @@ blob_dir()
 {
     # We don't provide any file management operations. This is up to the
     # user and his tools. Instead, we provide this shortcut to print the
-    # blob directory of the last entry today or of any given entry.
-    if [[ -z "$1" ]]
-    then
-        t=$(date +%F)
-        last=$(printf '%s\n' "$t"/*/"$entry_fname" | tail -n 1)
-        if [[ -z "$last" ]]
-        then
-            echo "Please create an entry for today first" >&2
-            return 1
-        fi
-        echo "${last%/*}/$blobs_fname"
-    else
-        echo "$1/$blobs_fname"
-    fi
+    # full path to a blob directory of a given entry.
+    #
+    # Most likely, you will want to write a little script/shortcut for
+    # your editor, so you can *write* a gitary entry and then push a
+    # button to open the corresponding blob directory.
+    #
+    # Note that $1 can be one of the following:
+    #
+    #     - An identifier as printed by "gitary --all",
+    #     - the relative path to this $entry_fname or
+    #     - the absolute path to this $entry_fname.
+    #
+    # This should make it as easy as possible for you to write tools for
+    # your editor.
+    e=$1
+    [[ "${e:0:1}" != "/" ]] && e="$(pwd)/$e"
+    [[ "$e" == *"$entry_fname" ]] && e=${e%/*}
+    echo "$e/$blobs_fname"
 }
 
 clean_empty()

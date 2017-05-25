@@ -28,12 +28,12 @@ printed in two columns: The first column is an identifier (e.g.,
 \(lq2016-08-21/12-23-10\(rq) which can be used in other operations like
 \fB\-\-edit\fP or \fB\-\-blob\fP to address this particular entry.
 .TP
-\fB\-\-blob\fP [\fIentry\fP]
+\fB\-\-blob\fP \fIentry\fP
 Print the directory where you are supposed to store \(lqblobs\(rq
-(images, videos, programs, ...). If \fIentry\fP is not given, the
-directory for the most recent entry today will be printed. \fIentry\fP
-must be an identifier as printed by listing operations like
-\fB\-\-all\fP.
+(images, videos, programs, ...). \fIentry\fP must be an identifier as
+printed by listing operations like \fB\-\-all\fP (with or without the
+trailing file name \fIentry.md\fP). Alternatively, it could also be the
+full path to this particular \fIentry.md\fP.
 .TP
 \fB\-\-continue\fP
 Continue editing the most recent entry of today.
