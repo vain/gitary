@@ -11,24 +11,32 @@ _edit()
     commit
 }
 
+_list_all_ids()
+{
+    find -H . -mindepth 3 -maxdepth 3 -name "$entry_fname" -printf '%P\n' |
+    sort |
+    while read -r
+    do
+        echo "${REPLY%/*}"
+    done
+}
+
 list_all()
 {
-    for i in */*/"$entry_fname"
+    _list_all_ids |
+    while read -r
     do
-        editable=${i%/*}
-        echo "$editable  $(head -n 1 -- "$i")"
+        echo "$REPLY  $(head -n 1 -- "$REPLY/$entry_fname")"
     done
 }
 
 list_recent()
 {
-    find -H . -mindepth 3 -maxdepth 3 -name "$entry_fname" -printf '%P\n' |
-    sort |
+    _list_all_ids |
     tail -n "${GITARY_RECENT_ITEMS:-10}" |
     while read -r
     do
-        editable=${REPLY%/*}
-        echo "$editable  $(head -n 1 -- "$REPLY")"
+        echo "$REPLY  $(head -n 1 -- "$REPLY/$entry_fname")"
     done
 }
 
@@ -117,17 +125,16 @@ commit()
     git commit -a -m "Auto-Commit by gitary on $HOSTNAME"
 }
 
-continue_today()
+continue_last()
 {
-    t=$(date +%F)
-    last=$(printf '%s\n' "$t"/*/"$entry_fname" | tail -n 1)
+    last=$(_list_all_ids | tail -n 1)
     if [[ -z "$last" ]]
     then
-        echo "Please create an entry for today first" >&2
+        echo "There are no entries, yet" >&2
         return 1
     fi
 
-    _edit "$last"
+    _edit "$last/$entry_fname"
 }
 
 edit_entry()
@@ -226,7 +233,7 @@ opt=${1##*-}
 case "$opt" in
     a|all)           list_all            ;;
     b|blob)          blob_dir "$2"       ;;
-    c|continue)      continue_today      ;;
+    c|continue)      continue_last       ;;
     e|edit)          edit_entry "$2"     ;;
     f|full-cleanup)  clean_empty yes     ;;
     n|new)           new_today           ;;

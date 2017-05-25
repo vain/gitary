@@ -5,6 +5,8 @@ next
   - "--blob $entry" now prints the full path to this entry's blob
     directory.
   - "--blob" now always requires you to specify an entry.
+  - "--continue" now continues with the *last* entry, not necessarily
+    the last entry *today*.
 
 v17.03  2017-03-11
   [Changed]
