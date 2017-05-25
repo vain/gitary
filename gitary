@@ -219,8 +219,6 @@ entry_fname=entry${GITARY_FILE_EXTENSION:-.md}
 # We rely on "ASCIIbetical" sorting order.
 export LC_COLLATE=C
 
-shopt -s nullglob
-
 check_and_cd_to_datadir || exit 1
 
 if [[ -z "$1" ]]
