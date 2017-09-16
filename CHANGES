@@ -1,5 +1,11 @@
 Release history for gitary
 
+next
+  [LICENSING]
+  - The project has been relicensed under the MIT license (more
+    precisely called "Expat License", but everyone calls it "MIT
+    license" these days).
+
 v17.06  2017-06-16
   [Changed]
   - "--blob $entry" now prints the full path to this entry's blob
